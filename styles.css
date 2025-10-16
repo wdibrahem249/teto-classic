@@ -272,6 +272,7 @@
     margin: 0 auto;
 }
         .product-card {
+            grid-template-columns: repeat(2, 1fr);
             background-color: var(--card-bg);
             border-radius: 8px;
             overflow: hidden;
@@ -738,4 +739,5 @@
         gap: 30px;
     }
 }
+
 
