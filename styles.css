@@ -265,11 +265,12 @@
         }
 
         .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
         .product-card {
             background-color: var(--card-bg);
             border-radius: 8px;
@@ -737,3 +738,4 @@
         gap: 30px;
     }
 }
+
