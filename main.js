@@ -194,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 images: [
                     'images/pants.2.1.jpg',
                     'images/pants.2.2.jpg',
+                    'images/pants.2.3.jpg',
                 ],
                 category: 'pants',
                 sizes: ["32", "34", "36", "38", "40"], // مقاسات البناطيل
@@ -230,7 +231,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 price: 600,
                 images: [
-                    'images/shose.1.1.jpg',
                     'images/shose.1.2.jpg',
                     'images/shose.1.3.jpg',
                 ],
@@ -1541,6 +1541,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the site
     init();
 });
+
 
 
 
