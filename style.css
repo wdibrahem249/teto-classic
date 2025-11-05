@@ -672,6 +672,7 @@ body[dir="ltr"] .product-offer {
     font-weight: 600;
 }
 
+/* Size Selection - تحسينات لنظام المقاسات الجديد */
 .size-selection {
     margin-bottom: 25px;
 }
@@ -685,6 +686,7 @@ body[dir="ltr"] .product-offer {
 .size-options {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .size-option {
@@ -694,12 +696,41 @@ body[dir="ltr"] .product-offer {
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 600;
+    min-width: 50px;
+    text-align: center;
+    background: white;
 }
 
 .size-option.active, .size-option:hover {
     border-color: var(--secondary-color);
     background: var(--secondary-color);
     color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.size-option:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.size-option:disabled:hover {
+    border-color: var(--border-color);
+    background: white;
+    color: var(--dark-gray);
+}
+
+.size-help {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.size-help i {
+    color: var(--secondary-color);
 }
 
 .stock-info {
@@ -1075,6 +1106,17 @@ body[dir="ltr"] .cart-item-img {
     font-weight: bold;
 }
 
+/* عرض المقاس في السلة */
+.cart-item-size {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    background: rgba(212, 175, 55, 0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
 .cart-item-remove {
     background: none;
     border: none;
@@ -1401,6 +1443,29 @@ footer {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Admin Stats Button */
+.admin-stats-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.admin-stats-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .header-container {
@@ -1479,6 +1544,15 @@ footer {
         align-items: flex-start;
         gap: 10px;
     }
+    
+    .size-options {
+        justify-content: center;
+    }
+    
+    .size-option {
+        padding: 8px 16px;
+        min-width: 45px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1513,5 +1587,13 @@ footer {
 
     .product-info .product-price {
         font-size: 1.5rem;
+    }
+    
+    .admin-stats-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        bottom: 15px;
+        right: 15px;
     }
 }
