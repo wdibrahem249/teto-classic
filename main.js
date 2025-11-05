@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedPlatform = 'whatsapp';
     let currentLanguage = 'ar';
     let currentProduct = null;
+    let selectedSize = ''; // متغير لتخزين المقاس المختار
     
     // Statistics data
     let siteStats = {
@@ -45,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // بيانات التقييمات
     let productRatings = {};
 
-    // Sample products data
+    // Sample products data مع إضافة المقاسات لكل منتج
     const products = {
         shirts: [
             {
@@ -56,11 +57,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 price: 350,
                 images: [
-                    'images/shirt 14.jpg',
-                    'images/shirt 14.jpg',
-                    'images/shirt 14.jpg',
+                    'images/shirt.8.1.jpg',
+                    'images/shirt.8.2.jpg',
+                    
                 ],
                 category: 'shirts',
+                sizes: ["S", "M", "L", "XL"], // مقاسات خاصة بهذا المنتج
                 description: {
                     ar: 'قميص كلاسيكي مصمم بأناقة مع تفاصيل عالية الجودة. مثالي للمناسبات الرسمية والعملية.',
                     en: 'Classic shirt elegantly designed with high-quality details. Perfect for formal and business occasions.'
@@ -69,19 +71,20 @@ document.addEventListener('DOMContentLoaded', function() {
             {
                 id: 2,
                 name: {
-                    ar: 'قميص كلاسيكي أبيض',
-                    en: 'Classic White Shirt'
+                    ar: 'قميص كاروهات بني',
+                    en: 'Brown Carohat Shirt'
                 },
                 price: 320,
                 images: [
-                    'images/shirt 1.jpg',
-                    'images/shirt 1.jpg',
-                    'images/shirt 1.jpg',
+                    'images/shirt.1.1.jpg',
+                    'images/shirt.1.2.jpg',
+                    'images/shirt.1.3.jpg',
                 ],
                 category: 'shirts',
+                sizes: ["M", "L", "XL", "2XL"], // مقاسات مختلفة
                 description: {
-                    ar: 'قميص أبيض نقي يناسب جميع المناسبات الرسمية مع تصميم أنيق وعصري.',
-                    en: 'Pure white shirt suitable for all formal occasions with elegant and modern design.'
+                    ar: 'قميص كاروهات بني رسمي سناسب كل المناسبات والمشاوير الرسمية.',
+                    en: 'brown carohat shirt suitable for all formal occasions with elegant and modern design.'
                 }
             },
             {
@@ -92,11 +95,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 price: 380,
                 images: [
-                    'images/shirt 2.jpg',
-                    'images/shirt 2.jpg',
-                    'images/shirt 2.jpg',
+                    'images/shirt.3.1.jpg',
+                    'images/shirt.3.2.jpg',
+                    'images/shirt.3.3.jpg',
                 ],
                 category: 'shirts',
+                sizes: ["S", "M", "L"], // مقاسات مختلفة
                 description: {
                     ar: 'قميص أزرق كلاسيكي يعكس الأناقة والثقة، مثالي للقاءات المهمة.',
                     en: 'Classic blue shirt reflecting elegance and confidence, perfect for important meetings.'
@@ -110,18 +114,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 price: 340,
                 images: [
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
+                    'images/shirt.4.1.jpg',
+                    'images/shirt.4.2.jpg',
+                    'images/shirt.4.3.jpg',
                 ],
                 category: 'shirts',
+                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
                 }
-            }
-        ],
-        {
+            },
+            {
                 id: 5,
                 name: {
                     ar: 'قميص كلاسيكي رمادي',
@@ -129,18 +133,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 price: 340,
                 images: [
-                    'img/shirt.1.1.jpg',
-                    'img/shirt.1.2.jpg',
-                    'img/shirt.1.3.jpg',
+                    'images/shirt.5.1.jpg',
+                    'images/shirt.5.2.jpg',
+                    'images/shirt.5.3.jpg',
                 ],
                 category: 'shirts',
+                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
                 }
-            }
-        ],
-    {
+            },
+            {
                 id: 6,
                 name: {
                     ar: 'قميص كلاسيكي رمادي',
@@ -148,18 +152,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 price: 340,
                 images: [
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
+                    'images/shirt.6.1.jpg',
+                    'images/shirt.6.2.jpg',
+                    'images/shirt.6.3.jpg',
                 ],
                 category: 'shirts',
+                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
                 }
-            }
-        ],
-    {
+            },
+            {
                 id: 7,
                 name: {
                     ar: 'قميص كلاسيكي رمادي',
@@ -167,87 +171,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 price: 340,
                 images: [
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
+                    'images/shirt.7.1.jpg',
+                    'images/shirt.7.2.jpg',
+                    'images/shirt.7.3.jpg',
                 ],
                 category: 'shirts',
-                description: {
-                    ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
-                    en: 'Elegant gray shirt combining classic and contemporary in one design.'
-                }
-            }
-        ],
-    {
-                id: 8,
-                name: {
-                    ar: 'قميص كلاسيكي رمادي',
-                    en: 'Classic Gray Shirt'
-                },
-                price: 340,
-                images: [
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
-                ],
-                category: 'shirts',
-                description: {
-                    ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
-                    en: 'Elegant gray shirt combining classic and contemporary in one design.'
-                }
-            }
-        ],
-    {
-                id: 9,
-                name: {
-                    ar: 'قميص كلاسيكي رمادي',
-                    en: 'Classic Gray Shirt'
-                },
-                price: 340,
-                images: [
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
-                ],
-                category: 'shirts',
-                description: {
-                    ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
-                    en: 'Elegant gray shirt combining classic and contemporary in one design.'
-                }
-            }
-        ],
-    {
-                id: 10,
-                name: {
-                    ar: 'قميص كلاسيكي رمادي',
-                    en: 'Classic Gray Shirt'
-                },
-                price: 340,
-                images: [
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
-                ],
-                category: 'shirts',
-                description: {
-                    ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
-                    en: 'Elegant gray shirt combining classic and contemporary in one design.'
-                }
-            }
-        ],
-    {
-                id: 11,
-                name: {
-                    ar: 'قميص كلاسيكي رمادي',
-                    en: 'Classic Gray Shirt'
-                },
-                price: 340,
-                images: [
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
-                    'images/shirt 3.jpg',
-                ],
-                category: 'shirts',
+                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -256,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         pants: [
             {
-                id: 12,
+                id: 5,
                 name: {
                     ar: 'بنطلون كلاسيكي أسود',
                     en: 'Classic Black Pants'
@@ -268,13 +197,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/black.hay.west3.jpg',
                 ],
                 category: 'pants',
+                sizes: ["32", "34", "36", "38", "40"], // مقاسات البناطيل
                 description: {
                     ar: 'بنطلون أسود كلاسيكي يناسب جميع المناسبات مع قصة مثالية.',
                     en: 'Classic black pants suitable for all occasions with perfect cut.'
                 }
             },
             {
-                id: 13,
+                id: 6,
                 name: {
                     ar: 'بنطلون كلاسيكي بيجي',
                     en: 'Classic peage Pants'
@@ -285,6 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/white hay west.jpg',
                 ],
                 category: 'pants',
+                sizes: ["30", "32", "34", "36"], // مقاسات مختلفة
                 description: {
                     ar: 'بنطلون بيجي أنيق يتميز بالراحة والأناقة في نفس الوقت.',
                     en: 'Elegant peage pants characterized by comfort and elegance at the same time.'
@@ -293,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         shoes: [
             {
-                id: 14,
+                id: 7,
                 name: {
                     ar: 'حذاء كلاسيكي أسود',
                     en: 'Classic Black Shoes'
@@ -304,13 +235,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/black lv3.jpg',
                 ],
                 category: 'shoes',
+                sizes: ["40", "41", "42", "43", "44"], // مقاسات الأحذية
                 description: {
                     ar: 'حذاء أسود كلاسيكي يجمع بين الأناقة والراحة في تصميم مبتكر.',
                     en: 'Classic black shoes combining elegance and comfort in an innovative design.'
                 }
             },
             {
-                id: 15,
+                id: 8,
                 name: {
                     ar: 'حذاء كلاسيكي ',
                     en: 'Classic Shoes'
@@ -322,6 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/classic lv.jpg',
                 ],
                 category: 'shoes',
+                sizes: ["39", "40", "41", "42", "43"], // مقاسات مختلفة
                 description: {
                     ar: 'حذاء بني أنيق يناسب الملابس الكلاسيكية والعصرية.',
                     en: 'Elegant brown shoes suitable for both classic and contemporary outfits.'
@@ -613,6 +546,19 @@ document.addEventListener('DOMContentLoaded', function() {
         return date.toLocaleDateString('ar-EG');
     }
 
+    // دالة لإنشاء عناصر المقاسات ديناميكياً
+    function createSizeOptions(sizes) {
+        let html = '';
+        sizes.forEach(size => {
+            html += `
+                <div class="size-option" data-size="${size}">
+                    <span>${size}</span>
+                </div>
+            `;
+        });
+        return html;
+    }
+
     // Open order form directly
     function openOrderForm(product) {
         // إضافة المنتج إلى السلة
@@ -627,6 +573,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show product detail page
     function showProductDetailPage(product) {
         currentProduct = product;
+        selectedSize = ''; // إعادة تعيين المقاس المختار
         
         // Hide all sections
         sections.forEach(section => {
@@ -674,6 +621,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 <li>${currentLanguage === 'ar' ? 'تفصيل احترافي يضمن المتانة والمظهر الأنيق' : 'Professional finish ensures durability and elegant appearance'}</li>
             </ul>
         `;
+        
+        // تحديث عرض المقاسات الخاصة بالمنتج
+        const sizeOptionsContainer = document.querySelector('.size-options');
+        if (sizeOptionsContainer) {
+            sizeOptionsContainer.innerHTML = createSizeOptions(product.sizes);
+            
+            // إضافة event listeners للمقاسات الجديدة
+            const sizeOptions = sizeOptionsContainer.querySelectorAll('.size-option');
+            sizeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // إزالة التحديد من جميع المقاسات
+                    sizeOptions.forEach(opt => opt.classList.remove('active'));
+                    // تحديد المقاس المختار
+                    this.classList.add('active');
+                    selectedSize = this.getAttribute('data-size');
+                });
+            });
+        }
         
         // تحديث عرض التقييمات
         updateProductRatingDisplay(product.id);
@@ -754,7 +719,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add product to cart
     function addToCart(product) {
-        const existingItem = cart.find(item => item.id === product.id);
+        // التحقق من اختيار مقاس إذا كان المنتج له مقاسات
+        if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+            showNotification(currentLanguage === 'ar' ? 'يرجى اختيار المقاس أولاً' : 'Please select a size first');
+            return;
+        }
+        
+        const existingItem = cart.find(item => item.id === product.id && item.size === selectedSize);
         
         if (existingItem) {
             existingItem.quantity += 1;
@@ -764,7 +735,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 name: product.name,
                 price: product.price,
                 image: product.images[0],
-                quantity: 1
+                quantity: 1,
+                size: selectedSize // إضافة المقاس المختار
             });
         }
         
@@ -1359,7 +1331,6 @@ document.addEventListener('DOMContentLoaded', function() {
         addToCartBtn.addEventListener('click', function() {
             if (currentProduct) {
                 addToCart(currentProduct);
-                showNotification(currentLanguage === 'ar' ? 'تمت إضافة المنتج إلى السلة' : 'Product added to cart');
             }
         });
 
@@ -1368,16 +1339,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (currentProduct) {
                 openOrderForm(currentProduct);
             }
-        });
-
-        // Size selection
-        document.querySelectorAll('.size-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.size-option').forEach(opt => {
-                    opt.classList.remove('active');
-                });
-                this.classList.add('active');
-            });
         });
 
         // Cart button
@@ -1432,7 +1393,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     id: item.id,
                     name: item.name,
                     quantity: item.quantity,
-                    price: item.price
+                    price: item.price,
+                    size: item.size // إضافة المقاس في بيانات الطلب
                 })),
                 total: getCartTotal()
             };
@@ -1462,7 +1424,11 @@ document.addEventListener('DOMContentLoaded', function() {
             message += currentLanguage === 'ar' ? 'المنتجات:%0A' : 'Products:%0A';
             
             cart.forEach(item => {
-                message += '- ' + item.name[currentLanguage] + ' (' + item.quantity + 'x) - ' + (item.price * item.quantity) + ' ' + (currentLanguage === 'ar' ? 'جنيه' : 'EGP') + '%0A';
+                let productLine = '- ' + item.name[currentLanguage] + ' (' + item.quantity + 'x) - ' + (item.price * item.quantity) + ' ' + (currentLanguage === 'ar' ? 'جنيه' : 'EGP');
+                if (item.size) {
+                    productLine += ' - ' + (currentLanguage === 'ar' ? 'المقاس: ' : 'Size: ') + item.size;
+                }
+                message += productLine + '%0A';
             });
             
             message += currentLanguage === 'ar' 
@@ -1569,6 +1535,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="cart-item-info">
                     <h4 class="cart-item-title">${item.name[currentLanguage]}</h4>
                     <div class="cart-item-price">${item.price} ${currentLanguage === 'ar' ? 'جنيه' : 'EGP'} × ${item.quantity}</div>
+                    ${item.size ? `<div class="cart-item-size">${currentLanguage === 'ar' ? 'المقاس: ' : 'Size: '}${item.size}</div>` : ''}
                 </div>
                 <button class="cart-item-remove" data-id="${item.id}">
                     <i class="fas fa-trash"></i>
@@ -1577,7 +1544,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const removeBtn = cartItem.querySelector('.cart-item-remove');
             removeBtn.addEventListener('click', function() {
-                removeFromCart(item.id);
+                removeFromCart(item.id, item.size);
             });
             
             cartItems.appendChild(cartItem);
@@ -1587,8 +1554,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Remove item from cart
-    function removeFromCart(productId) {
-        cart = cart.filter(item => item.id !== productId);
+    function removeFromCart(productId, size) {
+        cart = cart.filter(item => !(item.id === productId && item.size === size));
         updateCartCount();
         updateCartDisplay();
     }
@@ -1600,6 +1567,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize the site
     init();
-
 });
-
