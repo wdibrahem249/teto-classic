@@ -121,9 +121,142 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         ],
+        {
+                id: 5,
+                name: {
+                    ar: 'قميص كلاسيكي رمادي',
+                    en: 'Classic Gray Shirt'
+                },
+                price: 340,
+                images: [
+                    'img/shirt.1.1jpg',
+                    'img/shirt.1.2jpg',
+                    'img/shirt.1.3jpg',
+                ],
+                category: 'shirts',
+                description: {
+                    ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
+                    en: 'Elegant gray shirt combining classic and contemporary in one design.'
+                }
+            }
+        ],
+    {
+                id: 6,
+                name: {
+                    ar: 'قميص كلاسيكي رمادي',
+                    en: 'Classic Gray Shirt'
+                },
+                price: 340,
+                images: [
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                ],
+                category: 'shirts',
+                description: {
+                    ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
+                    en: 'Elegant gray shirt combining classic and contemporary in one design.'
+                }
+            }
+        ],
+    {
+                id: 7,
+                name: {
+                    ar: 'قميص كلاسيكي رمادي',
+                    en: 'Classic Gray Shirt'
+                },
+                price: 340,
+                images: [
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                ],
+                category: 'shirts',
+                description: {
+                    ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
+                    en: 'Elegant gray shirt combining classic and contemporary in one design.'
+                }
+            }
+        ],
+    {
+                id: 8,
+                name: {
+                    ar: 'قميص كلاسيكي رمادي',
+                    en: 'Classic Gray Shirt'
+                },
+                price: 340,
+                images: [
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                ],
+                category: 'shirts',
+                description: {
+                    ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
+                    en: 'Elegant gray shirt combining classic and contemporary in one design.'
+                }
+            }
+        ],
+    {
+                id: 9,
+                name: {
+                    ar: 'قميص كلاسيكي رمادي',
+                    en: 'Classic Gray Shirt'
+                },
+                price: 340,
+                images: [
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                ],
+                category: 'shirts',
+                description: {
+                    ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
+                    en: 'Elegant gray shirt combining classic and contemporary in one design.'
+                }
+            }
+        ],
+    {
+                id: 10,
+                name: {
+                    ar: 'قميص كلاسيكي رمادي',
+                    en: 'Classic Gray Shirt'
+                },
+                price: 340,
+                images: [
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                ],
+                category: 'shirts',
+                description: {
+                    ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
+                    en: 'Elegant gray shirt combining classic and contemporary in one design.'
+                }
+            }
+        ],
+    {
+                id: 11,
+                name: {
+                    ar: 'قميص كلاسيكي رمادي',
+                    en: 'Classic Gray Shirt'
+                },
+                price: 340,
+                images: [
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                    'images/shirt 3.jpg',
+                ],
+                category: 'shirts',
+                description: {
+                    ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
+                    en: 'Elegant gray shirt combining classic and contemporary in one design.'
+                }
+            }
+        ],
         pants: [
             {
-                id: 5,
+                id: 12,
                 name: {
                     ar: 'بنطلون كلاسيكي أسود',
                     en: 'Classic Black Pants'
@@ -141,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             {
-                id: 6,
+                id: 13,
                 name: {
                     ar: 'بنطلون كلاسيكي بيجي',
                     en: 'Classic peage Pants'
@@ -160,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         shoes: [
             {
-                id: 7,
+                id: 14,
                 name: {
                     ar: 'حذاء كلاسيكي أسود',
                     en: 'Classic Black Shoes'
@@ -177,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             {
-                id: 8,
+                id: 15,
                 name: {
                     ar: 'حذاء كلاسيكي ',
                     en: 'Classic Shoes'
@@ -1467,4 +1600,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize the site
     init();
+
 });
