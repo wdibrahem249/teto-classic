@@ -1484,33 +1484,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // أحداث الإحصائيات
-        statsBtn.addEventListener('click', function() {
-            adminStats.style.display = 'flex';
-            updateStatsDisplay();
-        });
 
-        closeStats.addEventListener('click', function() {
-            adminStats.style.display = 'none';
-        });
-
-        exportStats.addEventListener('click', function() {
-            exportStatistics();
-        });
-
-        resetStats.addEventListener('click', function() {
-            if (confirm(currentLanguage === 'ar' ? 'هل أنت متأكد من إعادة تعيين جميع الإحصائيات؟' : 'Are you sure you want to reset all statistics?')) {
-                resetStatistics();
-            }
-        });
-
-        // إغلاق الإحصائيات بالنقر خارجها
-        adminStats.addEventListener('click', function(e) {
-            if (e.target === adminStats) {
-                adminStats.style.display = 'none';
-            }
-        });
-    }
 
     // Update cart display
     function updateCartDisplay() {
@@ -1568,3 +1542,4 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the site
     init();
 });
+
