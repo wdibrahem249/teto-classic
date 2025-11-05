@@ -185,16 +185,15 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         pants: [
             {
-                id: 5,
+                id: 8,
                 name: {
                     ar: 'بنطلون كلاسيكي أسود',
                     en: 'Classic Black Pants'
                 },
                 price: 450,
                 images: [
-                    'images/black.hay.west1.jpg',
-                    'images/black.hay.west2.jpg',
-                    'images/black.hay.west3.jpg',
+                    'images/pants.2.1.jpg',
+                    'images/pants.2.2.jpg',
                 ],
                 category: 'pants',
                 sizes: ["32", "34", "36", "38", "40"], // مقاسات البناطيل
@@ -204,15 +203,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             {
-                id: 6,
+                id: 9,
                 name: {
                     ar: 'بنطلون كلاسيكي بيجي',
                     en: 'Classic peage Pants'
                 },
                 price: 480,
                 images: [
-                    'images/white hay west 1.jpg',
-                    'images/white hay west.jpg',
+                    'images/pants.1.1.jpg',
+                    'images/pants.1.2.jpg',
                 ],
                 category: 'pants',
                 sizes: ["30", "32", "34", "36"], // مقاسات مختلفة
@@ -224,15 +223,16 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         shoes: [
             {
-                id: 7,
+                id: 10,
                 name: {
                     ar: 'حذاء كلاسيكي أسود',
                     en: 'Classic Black Shoes'
                 },
                 price: 600,
                 images: [
-                    'images/black lv.jpg',
-                    'images/black lv3.jpg',
+                    'images/shose.1.1.jpg',
+                    'images/shose.1.2.jpg',
+                    'images/shose.1.3.jpg',
                 ],
                 category: 'shoes',
                 sizes: ["40", "41", "42", "43", "44"], // مقاسات الأحذية
@@ -242,16 +242,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             {
-                id: 8,
+                id: 11,
                 name: {
                     ar: 'حذاء كلاسيكي ',
                     en: 'Classic Shoes'
                 },
                 price: 650,
                 images: [
-                    'images/classic 1.jpg',
-                    'images/classic shoese 2.jpg',
-                    'images/classic lv.jpg',
+                    'images/shose.2.1.jpg',
+                    'images/shose.2.2.jpg',
                 ],
                 category: 'shoes',
                 sizes: ["39", "40", "41", "42", "43"], // مقاسات مختلفة
@@ -1542,4 +1541,5 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the site
     init();
 });
+
 
