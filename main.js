@@ -129,9 +129,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 price: 340,
                 images: [
-                    'img/shirt.1.1jpg',
-                    'img/shirt.1.2jpg',
-                    'img/shirt.1.3jpg',
+                    'img/shirt.1.1.jpg',
+                    'img/shirt.1.2.jpg',
+                    'img/shirt.1.3.jpg',
                 ],
                 category: 'shirts',
                 description: {
@@ -1602,3 +1602,4 @@ document.addEventListener('DOMContentLoaded', function() {
     init();
 
 });
+
