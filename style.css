@@ -230,7 +230,7 @@ main {
 .hero {
     text-align: center;
     padding: 320px 0;
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('images/poster\ 1.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('images/poster 1.jpg');
     background-size: cover;
     background-position: center;
     color: var(--text-color);
@@ -253,6 +253,15 @@ main {
     font-style: italic;
     font-size: 1.1rem;
     margin: 20px 0;
+}
+
+.contact-info {
+    margin-top: 30px;
+}
+
+.contact-info p {
+    margin: 10px 0;
+    font-size: 1.1rem;
 }
 
 /* Poster Section */
@@ -1163,27 +1172,6 @@ body[dir="ltr"] .cart-total {
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 5px;
     font-size: 1rem;
-}
-
-.send-options {
-    display: flex;
-    gap: 15px;
-    margin: 20px 0;
-}
-
-.send-option {
-    flex: 1;
-    text-align: center;
-    padding: 10px;
-    border: 2px solid var(--primary-color);
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.send-option.active {
-    background-color: var(--primary-color);
-    color: var(--text-color);
 }
 
 .submit-order {
