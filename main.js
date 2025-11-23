@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitOrder = document.getElementById('submitOrder');
     const navLinks = document.querySelectorAll('.nav-link');
     const sections = document.querySelectorAll('.section');
-    const sendOptions = document.querySelectorAll('.send-option');
     const languageBtn = document.getElementById('languageBtn');
     const languageOptions = document.getElementById('languageOptions');
     const languageOptionItems = document.querySelectorAll('.language-option');
@@ -27,10 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Global state
     let cart = [];
-    let selectedPlatform = 'whatsapp';
     let currentLanguage = 'ar';
     let currentProduct = null;
-    let selectedSize = ''; // متغير لتخزين المقاس المختار
+    let selectedSize = '';
     
     // Statistics data
     let siteStats = {
@@ -46,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // بيانات التقييمات
     let productRatings = {};
 
-    // Sample products data مع إضافة المقاسات لكل منتج
+    // Sample products data
     const products = {
         shirts: [
             {
@@ -62,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                 ],
                 category: 'shirts',
-                sizes: ["S", "M", "L", "XL"], // مقاسات خاصة بهذا المنتج
+                sizes: ["S", "M", "L", "XL"],
                 description: {
                     ar: 'قميص كلاسيكي مصمم بأناقة مع تفاصيل عالية الجودة. مثالي للمناسبات الرسمية والعملية.',
                     en: 'Classic shirt elegantly designed with high-quality details. Perfect for formal and business occasions.'
@@ -81,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/shirt.2.3.jpg',
                 ],
                 category: 'shirts',
-                sizes: ["M", "L", "XL", "2XL"], // مقاسات مختلفة
+                sizes: ["M", "L", "XL", "2XL"],
                 description: {
                     ar: 'قميص كاروهات بني رسمي سناسب كل المناسبات والمشاوير الرسمية.',
                     en: 'brown carohat shirt suitable for all formal occasions with elegant and modern design.'
@@ -100,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
                    
                 ],
                 category: 'shirts',
-                sizes: ["S", "M", "L"], // مقاسات مختلفة
+                sizes: ["S", "M", "L"],
                 description: {
                     ar: 'قميص أزرق كلاسيكي يعكس الأناقة والثقة، مثالي للقاءات المهمة.',
                     en: 'Classic blue shirt reflecting elegance and confidence, perfect for important meetings.'
@@ -118,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                 ],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
+                sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -136,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                 ],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
+                sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -155,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                 ],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
+                sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -174,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                 ],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
+                sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -193,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                 ],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
+                sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -212,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/shirt.9.3.jpg',
                 ],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
+                sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -231,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/shirt.10.3.jpg',
                 ],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
+                sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -250,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/shirt.11.3.jpg',
                 ],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
+                sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -269,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                 ],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
+                sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -288,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                 ],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
+                sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -307,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/shirt.14.3.jpg',
                 ],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"], // مقاسات كبيرة فقط
+                sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
                     ar: 'قميص رمادي أنيق يجمع بين الكلاسيكية والعصرية في تصميم واحد.',
                     en: 'Elegant gray shirt combining classic and contemporary in one design.'
@@ -328,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/pants.2.3.jpg',
                 ],
                 category: 'pants',
-                sizes: ["32", "34", "36", "38", "40"], // مقاسات البناطيل
+                sizes: ["32", "34", "36", "38", "40"],
                 description: {
                     ar: 'بنطلون أسود كلاسيكي يناسب جميع المناسبات مع قصة مثالية.',
                     en: 'Classic black pants suitable for all occasions with perfect cut.'
@@ -346,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/pants.1.2.jpg',
                 ],
                 category: 'pants',
-                sizes: ["30", "32", "34", "36"], // مقاسات مختلفة
+                sizes: ["30", "32", "34", "36"],
                 description: {
                     ar: 'بنطلون بيجي أنيق يتميز بالراحة والأناقة في نفس الوقت.',
                     en: 'Elegant peage pants characterized by comfort and elegance at the same time.'
@@ -366,7 +364,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/shose.1.3.jpg',
                 ],
                 category: 'shoes',
-                sizes: ["40", "41", "42", "43", "44"], // مقاسات الأحذية
+                sizes: ["40", "41", "42", "43", "44"],
                 description: {
                     ar: 'حذاء أسود كلاسيكي يجمع بين الأناقة والراحة في تصميم مبتكر.',
                     en: 'Classic black shoes combining elegance and comfort in an innovative design.'
@@ -384,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'images/shose.2.2.jpg',
                 ],
                 category: 'shoes',
-                sizes: ["39", "40", "41", "42", "43"], // مقاسات مختلفة
+                sizes: ["39", "40", "41", "42", "43"],
                 description: {
                     ar: 'حذاء بني أنيق يناسب الملابس الكلاسيكية والعصرية.',
                     en: 'Elegant brown shoes suitable for both classic and contemporary outfits.'
@@ -1307,33 +1305,22 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('label[for="secondaryPhone"]').textContent = currentLanguage === 'ar' ? 'رقم الهاتف الاحتياطي' : 'Secondary Phone Number';
         document.querySelector('label[for="customerAddress"]').textContent = currentLanguage === 'ar' ? 'العنوان' : 'Address';
         
-        const sendMethodTitle = document.querySelector('#checkoutForm h3:nth-child(6)');
-        if (sendMethodTitle) {
-            sendMethodTitle.textContent = currentLanguage === 'ar' ? 'طريقة إرسال الطلب' : 'Order Sending Method';
-        }
-        
-        document.querySelectorAll('.send-option p').forEach((p, index) => {
-            const texts = ['واتساب', 'إنستجرام'];
-            const enTexts = ['WhatsApp', 'Instagram'];
-            p.textContent = currentLanguage === 'ar' ? texts[index] : enTexts[index];
-        });
-        
         const submitBtn = document.getElementById('submitOrder');
         if (submitBtn) {
-            submitBtn.textContent = currentLanguage === 'ar' ? 'إرسال الطلب' : 'Send Order';
+            submitBtn.textContent = currentLanguage === 'ar' ? 'إرسال الطلب عبر واتساب' : 'Send Order via WhatsApp';
         }
         
         // Footer
         document.querySelectorAll('.footer-links a').forEach((link, index) => {
-            const texts = ['سياسة الخصوصية', 'شروط الاستخدام', 'سياسة الإرجاع والاستبدال', 'الأسئلة الشائعة', 'اتصل بنا'];
-            const enTexts = ['Privacy Policy', 'Terms of Use', 'Return & Exchange Policy', 'FAQ', 'Contact Us'];
+            const texts = ['سياسة الخصوصية', 'الاسئلة الشائعة'];
+            const enTexts = ['Privacy Policy', 'FAQ'];
             link.textContent = currentLanguage === 'ar' ? texts[index] : enTexts[index];
         });
         
         const copyright = document.querySelector('.copyright');
         copyright.textContent = currentLanguage === 'ar' 
-            ? '&copy; 2023 Teto Classic. جميع الحقوق محفوظة.' 
-            : '&copy; 2023 Teto Classic. All rights reserved.';
+            ? '2025 Teto Classic. جميع الحقوق محفوظة.' 
+            : '2025 Teto Classic. All rights reserved.';
             
         // إحصائيات
         if (document.querySelector('.stats-container h2')) {
@@ -1496,15 +1483,6 @@ document.addEventListener('DOMContentLoaded', function() {
             checkoutForm.classList.add('active');
         });
 
-        // Send options
-        sendOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                sendOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-                selectedPlatform = this.getAttribute('data-platform');
-            });
-        });
-
         // Submit order
         submitOrder.addEventListener('click', function() {
             const name = document.getElementById('customerName').value;
@@ -1524,60 +1502,49 @@ document.addEventListener('DOMContentLoaded', function() {
                     name: item.name,
                     quantity: item.quantity,
                     price: item.price,
-                    size: item.size // إضافة المقاس في بيانات الطلب
+                    size: item.size,
+                    image: item.image
                 })),
                 total: getCartTotal()
             };
             
             recordOrder(orderData);
             
-            // Create order message
-            let message = currentLanguage === 'ar' 
-                ? 'طلب جديد من ' + name + '%0A'
-                : 'New order from ' + name + '%0A';
+            // Create detailed order message for WhatsApp
+            let message = '🛒 *طلب جديد - Teto Classic* %0A%0A';
             
-            message += currentLanguage === 'ar' 
-                ? 'رقم الهاتف: ' + primaryPhone + '%0A'
-                : 'Phone: ' + primaryPhone + '%0A';
+            message += '*📋 معلومات العميل:*%0A';
+            message += '👤 الاسم: ' + name + '%0A';
+            message += '📞 الهاتف: ' + primaryPhone + '%0A';
             
             const secondaryPhone = document.getElementById('secondaryPhone').value;
             if (secondaryPhone) {
-                message += currentLanguage === 'ar' 
-                    ? 'رقم احتياطي: ' + secondaryPhone + '%0A'
-                    : 'Secondary phone: ' + secondaryPhone + '%0A';
+                message += '📱 الهاتف الاحتياطي: ' + secondaryPhone + '%0A';
             }
             
-            message += currentLanguage === 'ar' 
-                ? 'العنوان: ' + address + '%0A%0A'
-                : 'Address: ' + address + '%0A%0A';
+            message += '📍 العنوان: ' + address + '%0A%0A';
             
-            message += currentLanguage === 'ar' ? 'المنتجات:%0A' : 'Products:%0A';
+            message += '*🛍️ المنتجات المطلوبة:*%0A';
             
-            cart.forEach(item => {
-                let productLine = '- ' + item.name[currentLanguage] + ' (' + item.quantity + 'x) - ' + (item.price * item.quantity) + ' ' + (currentLanguage === 'ar' ? 'جنيه' : 'EGP');
+            cart.forEach((item, index) => {
+                message += '%0A' + (index + 1) + '. *' + item.name[currentLanguage] + '*%0A';
+                message += '   📦 الكمية: ' + item.quantity + '%0A';
+                message += '   💰 السعر: ' + item.price + ' جنيه%0A';
                 if (item.size) {
-                    productLine += ' - ' + (currentLanguage === 'ar' ? 'المقاس: ' : 'Size: ') + item.size;
+                    message += '   📏 المقاس: ' + item.size + '%0A';
                 }
-                message += productLine + '%0A';
+                message += '   💵 الإجمالي: ' + (item.price * item.quantity) + ' جنيه%0A';
+                
+                // إضافة رابط صورة المنتج
+                message += '   🖼️ صورة المنتج: ' + item.image + '%0A';
             });
             
-            message += currentLanguage === 'ar' 
-                ? '%0Aالمجموع: ' + getCartTotal() + ' جنيه'
-                : '%0ATotal: ' + getCartTotal() + ' EGP';
+            message += '%0A*💰 المجموع الكلي:* ' + getCartTotal() + ' جنيه%0A%0A';
+            message += '⏰ وقت الطلب: ' + new Date().toLocaleString('ar-EG') + '%0A%0A';
+            message += 'شكراً لثقتكم في Teto Classic! 🎉';
             
-            // Send via selected platform
-            let url = '';
-            if (selectedPlatform === 'whatsapp') {
-                url = 'https://wa.me/201275533360?text=' + message;
-            } else {
-                // For Instagram, we'll open in a new tab with a message
-                alert(currentLanguage === 'ar' 
-                    ? 'يرجى إرسال الطلب يدوياً عبر إنستجرام مع تفاصيل الطلب أعلاه' 
-                    : 'Please send the order manually via Instagram with the above order details');
-                window.open('https://www.instagram.com/teto_classic_egy/', '_blank');
-                return;
-            }
-            
+            // Send via WhatsApp
+            const url = 'https://wa.me/201275533360?text=' + message;
             window.open(url, '_blank');
             
             // Reset cart and form
@@ -1588,8 +1555,8 @@ document.addEventListener('DOMContentLoaded', function() {
             cartModal.classList.remove('active');
             
             showNotification(currentLanguage === 'ar' 
-                ? 'تم إرسال طلبك بنجاح' 
-                : 'Your order has been sent successfully');
+                ? 'تم إرسال طلبك بنجاح إلى الواتساب' 
+                : 'Your order has been sent successfully to WhatsApp');
         });
 
         // Language switcher
