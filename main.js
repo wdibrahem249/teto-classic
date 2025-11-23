@@ -1544,7 +1544,7 @@ document.addEventListener('DOMContentLoaded', function() {
             message += 'شكراً لثقتكم في Teto Classic! 🎉';
             
             // Send via WhatsApp
-            const url = 'https://wa.me/201275533360?text=' + message;
+            const url = 'https://wa.me/201150843060?text=' + message;
             window.open(url, '_blank');
             
             // Reset cart and form
@@ -1665,3 +1665,4 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the site
     init();
 });
+
