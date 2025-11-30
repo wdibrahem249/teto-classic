@@ -168,6 +168,7 @@
                         <div class="product-info">
                             <h1 id="productDetailTitle" class="product-title"></h1>
                             <div class="product-price" id="productDetailPrice"></div>
+                            <div class="product-code" id="productDetailCode"></div>
                             
                             <!-- Quick Rating Display -->
                             <div class="quick-rating-display">
@@ -293,6 +294,60 @@
             </div>
         </section>
 
+        <!-- Order Form Modal -->
+        <div class="order-modal" id="orderModal">
+            <div class="order-container">
+                <button class="close-order" id="closeOrder">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="order-content">
+                    <h2 class="section-title">إتمام الطلب</h2>
+                    
+                    <div class="order-summary">
+                        <h3>ملخص الطلب</h3>
+                        <div class="order-product-info">
+                            <img id="orderProductImage" src="" alt="Product Image">
+                            <div class="order-product-details">
+                                <h4 id="orderProductName"></h4>
+                                <div class="order-product-price" id="orderProductPrice"></div>
+                                <div class="order-product-code" id="orderProductCode"></div>
+                                <div class="order-product-size" id="orderProductSize"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="checkout-form" id="checkoutForm">
+                        <h3>معلومات العميل</h3>
+                        <div class="form-group">
+                            <label for="customerName">الاسم بالكامل *</label>
+                            <input type="text" id="customerName" required placeholder="أدخل اسمك الكامل">
+                        </div>
+                        <div class="form-group">
+                            <label for="primaryPhone">رقم الهاتف الأساسي *</label>
+                            <input type="tel" id="primaryPhone" required placeholder="أدخل رقم هاتفك الأساسي">
+                        </div>
+                        <div class="form-group">
+                            <label for="secondaryPhone">رقم الهاتف الاحتياطي</label>
+                            <input type="tel" id="secondaryPhone" placeholder="أدخل رقم هاتف احتياطي (اختياري)">
+                        </div>
+                        <div class="form-group">
+                            <label for="customerAddress">العنوان التفصيلي *</label>
+                            <textarea id="customerAddress" rows="3" required placeholder="أدخل عنوانك التفصيلي"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="additionalNotes">ملاحظات إضافية</label>
+                            <textarea id="additionalNotes" rows="2" placeholder="أي ملاحظات إضافية حول الطلب (اختياري)"></textarea>
+                        </div>
+                        
+                        <button class="submit-order-btn" id="submitOrder">
+                            <i class="fab fa-whatsapp"></i>
+                            إرسال الطلب عبر واتساب
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Cart Modal -->
         <div class="cart-modal" id="cartModal">
             <div class="cart-container">
@@ -306,29 +361,7 @@
                     </div>
                     <div class="cart-total">المجموع: <span id="cartTotal">0</span> جنيه</div>
                     <button class="continue-shopping" id="continueShopping">مواصلة التسوق</button>
-                    <button class="submit-order" id="proceedCheckout">إتمام الشراء</button>
-                    
-                    <div class="checkout-form" id="checkoutForm">
-                        <h3>معلومات العميل</h3>
-                        <div class="form-group">
-                            <label for="customerName">الاسم بالكامل</label>
-                            <input type="text" id="customerName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="primaryPhone">رقم الهاتف الأساسي</label>
-                            <input type="tel" id="primaryPhone" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="secondaryPhone">رقم الهاتف الاحتياطي</label>
-                            <input type="tel" id="secondaryPhone">
-                        </div>
-                        <div class="form-group">
-                            <label for="customerAddress">العنوان</label>
-                            <textarea id="customerAddress" rows="3" required></textarea>
-                        </div>
-                        
-                        <button class="submit-order" id="submitOrder">إرسال الطلب عبر واتساب</button>
-                    </div>
+                    <button class="proceed-checkout" id="proceedCheckout">إتمام الشراء</button>
                 </div>
             </div>
         </div>
@@ -352,85 +385,7 @@
         <i class="fas fa-chart-bar"></i>
     </button>
 
-    <!-- Admin Statistics Panel -->
-    <div class="admin-stats">
-        <div class="stats-container">
-            <button class="close-stats" id="closeStats">
-                <i class="fas fa-times"></i>
-            </button>
-            <h2>إحصائيات الموقع</h2>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="totalVisitors">0</h3>
-                        <p>إجمالي الزوار</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-shopping-bag"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="totalOrders">0</h3>
-                        <p>إجمالي الطلبات</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="totalSales">0</h3>
-                        <p>إجمالي المبيعات (جنيه)</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 id="monthlyVisitors">0</h3>
-                        <p>زوار هذا الشهر</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="charts-section">
-                <div class="chart-container">
-                    <h3>الزيارات خلال آخر 7 أيام</h3>
-                    <canvas id="visitsChart" width="400" height="200"></canvas>
-                </div>
-                <div class="chart-container">
-                    <h3>المنتجات الأكثر مبيعاً</h3>
-                    <div class="top-products" id="topProducts">
-                        <!-- Top products will be added here -->
-                    </div>
-                </div>
-            </div>
-            
-            <div class="recent-orders">
-                <h3>آخر الطلبات</h3>
-                <div class="orders-list" id="recentOrdersList">
-                    <!-- Recent orders will be added here -->
-                </div>
-            </div>
-            
-            <div class="stats-actions">
-                <button class="export-btn" id="exportStats">
-                    <i class="fas fa-download"></i>
-                    تصدير البيانات
-                </button>
-                <button class="reset-btn" id="resetStats">
-                    <i class="fas fa-redo"></i>
-                    إعادة التعيين
-                </button>
-            </div>
-        </div>
-    </div>
+    
 
     <script src="main.js"></script>
 </body>
