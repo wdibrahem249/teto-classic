@@ -366,7 +366,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     en: 'A classy striped sky-blue shirt shirt long-sleeve shirt'
                 }
             },
-            
+             {
+                id: 17,
+                code: 'B-15',
+                name: {
+                    ar: 'قميص كاروهات زيتي',
+                    en: 'dark green carohat Shirt'
+                },
+                price: 424,
+                images: [
+                    'images/shirt.17.1.jpeg',
+                    
+                ],
+                category: 'shirts',
+                sizes: ["", "", "2XL", ""],
+                description: {
+                    ar: 'قميص كاروهات زيتي فاخر مناسب للطلعات البسيطة راقي بكم طويل',
+                    en: 'A classy carohat dark green shirt shirt long-sleeve shirt'
+                }
+            },
             {
                 id: 18,
                 code: 'B-2',
