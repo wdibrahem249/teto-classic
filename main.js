@@ -1,4 +1,6 @@
-// JavaScript Code
+// main.js
+// إصلاح نظام التقييمات ومشكلة تفاصيل المنتج المشتركة
+
 document.addEventListener('DOMContentLoaded', function() {
     // Elements
     const menuBtn = document.getElementById('menuBtn');
@@ -53,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // بيانات التقييمات
     let productRatings = {};
 
-    // Sample products data مع إضافة رمز لكل منتج
+    // Sample products data - إضافة صور حقيقية لكل منتج
     const products = {
         shirts: [
             {
@@ -79,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 id: 2,
                 code: 'A-3',
                 name: {
-                    ar: 'قميص  زيتي',
+                    ar: 'قميص زيتي',
                     en: 'Olive Green Shirt'
                 },
                 price: 399,
@@ -174,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             {
                 id: 7,
-                code: 'A-2',
+                code: 'A-9',
                 name: {
                     ar: 'قميص مخطط رمادي',
                     en: 'Striped Gray shirt'
@@ -408,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         pants: [
             {
-                id: 4,
+                id: 19,
                 code: 'PST-04',
                 name: {
                     ar: 'بنطلون كلاسيكي أسود',
@@ -428,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             {
-                id: 5,
+                id: 20,
                 code: 'PT-002',
                 name: {
                     ar: 'بنطلون كلاسيكي بيجي',
@@ -449,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         shoes: [
             {
-                id: 6,
+                id: 21,
                 code: 'SH-001',
                 name: {
                     ar: 'حذاء كلاسيكي أسود',
@@ -468,7 +470,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             {
-                id: 7,
+                id: 22,
                 code: 'SH-002',
                 name: {
                     ar: 'حذاء كلاسيكي بني',
@@ -533,7 +535,8 @@ document.addEventListener('DOMContentLoaded', function() {
         card.innerHTML = `
             <div class="product-offer">${currentLanguage === 'ar' ? 'عرض محدود' : 'Limited Offer'}</div>
             <div class="product-img">
-                <img src="${product.images[0]}" alt="${product.name[currentLanguage]}" loading="lazy">
+                <img src="${product.images[0]}" alt="${product.name[currentLanguage]}" loading="lazy" 
+                     onerror="this.src='images/default-product.jpg'">
             </div>
             <div class="product-info">
                 <h3 class="product-title">${product.name[currentLanguage]}</h3>
@@ -562,6 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const addToCartBtn = card.querySelector('.add-to-cart-btn');
         addToCartBtn.addEventListener('click', function(e) {
             e.stopPropagation();
+            currentProduct = product; // تعيين المنتج الحالي
             addToCart(product);
             showNotification(currentLanguage === 'ar' ? 'تمت إضافة المنتج إلى السلة' : 'Product added to cart');
         });
@@ -569,6 +573,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const buyNowBtn = card.querySelector('.buy-now-btn');
         buyNowBtn.addEventListener('click', function(e) {
             e.stopPropagation();
+            currentProduct = product; // تعيين المنتج الحالي
             openOrderForm(product);
         });
         
@@ -583,6 +588,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function initRatings() {
         loadRatings();
         setupRatingListeners();
+        
+        // إضافة تقييمات تجريبية إذا لم يكن هناك تقييمات
+        setTimeout(() => {
+            if (Object.keys(productRatings).length === 0) {
+                addSampleRatings();
+            }
+        }, 1000);
     }
 
     function loadRatings() {
@@ -597,62 +609,136 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setupRatingListeners() {
-        // النجوم التفاعلية
-        const starsInput = document.querySelector('.stars-input');
-        if (starsInput) {
-            const stars = starsInput.querySelectorAll('i');
-            stars.forEach(star => {
-                star.addEventListener('click', function() {
-                    const rating = parseInt(this.getAttribute('data-rating'));
-                    setStarRating(rating);
+        // إعادة تهيئة النجوم عند كل مرة
+        document.addEventListener('click', function() {
+            const starsInput = document.querySelector('.stars-input');
+            if (starsInput) {
+                const stars = starsInput.querySelectorAll('i');
+                stars.forEach(star => {
+                    star.addEventListener('click', function() {
+                        const rating = parseInt(this.getAttribute('data-rating'));
+                        setStarRating(rating);
+                    });
+                    
+                    star.addEventListener('mouseover', function() {
+                        const rating = parseInt(this.getAttribute('data-rating'));
+                        highlightStars(rating);
+                    });
                 });
-                
-                star.addEventListener('mouseover', function() {
-                    const rating = parseInt(this.getAttribute('data-rating'));
-                    highlightStars(rating);
-                });
-            });
-            
-            // إعادة تعيين النجوم عند مغادرة المنطقة
-            starsInput.addEventListener('mouseleave', function() {
-                const currentRating = parseInt(document.getElementById('selectedRating').textContent) || 0;
-                highlightStars(currentRating);
-            });
-        }
+            }
+        });
         
         // زر إرسال التقييم
         const submitBtn = document.getElementById('submitRating');
         if (submitBtn) {
             submitBtn.addEventListener('click', submitRating);
         }
+        
+        // إعادة تهيئة النجوم عند فتح صفحة المنتج
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    const starsInput = document.querySelector('.stars-input');
+                    if (starsInput) {
+                        const stars = starsInput.querySelectorAll('i');
+                        stars.forEach(star => {
+                            star.addEventListener('click', function() {
+                                const rating = parseInt(this.getAttribute('data-rating'));
+                                setStarRating(rating);
+                            });
+                            
+                            star.addEventListener('mouseover', function() {
+                                const rating = parseInt(this.getAttribute('data-rating'));
+                                highlightStars(rating);
+                            });
+                        });
+                    }
+                }
+            });
+        });
+        
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    // إضافة تقييمات تجريبية للمنتجات
+    function addSampleRatings() {
+        const sampleRatings = [
+            { productId: 1, rating: 5, user: "محمد أحمد" },
+            { productId: 1, rating: 4, user: "علي محمود" },
+            { productId: 2, rating: 5, user: "خالد عمر" },
+            { productId: 3, rating: 4, user: "سالم يوسف" },
+            { productId: 4, rating: 5, user: "أحمد سعيد" },
+            { productId: 5, rating: 4, user: "مصطفى كمال" },
+            { productId: 6, rating: 5, user: "يوسف حسن" },
+            { productId: 7, rating: 3, user: "حسام الدين" },
+            { productId: 8, rating: 4, user: "طارق عثمان" },
+            { productId: 9, rating: 5, user: "سامي رضا" },
+            { productId: 10, rating: 4, user: "ناصر علي" },
+            { productId: 11, rating: 5, user: "فارس جمال" },
+            { productId: 12, rating: 4, user: "وسام محمد" },
+            { productId: 13, rating: 5, user: "بدر خالد" },
+            { productId: 14, rating: 4, user: "رامي سعد" },
+            { productId: 15, rating: 5, user: "عمر فاروق" },
+            { productId: 16, rating: 4, user: "مجد الدين" },
+            { productId: 17, rating: 5, user: "رياض مصطفى" },
+            { productId: 18, rating: 4, user: "جلال كريم" },
+            { productId: 19, rating: 5, user: "وليد حمدي" },
+            { productId: 20, rating: 4, user: "صبري ناصر" },
+            { productId: 21, rating: 5, user: "محمود عادل" },
+            { productId: 22, rating: 4, user: "فهد سليمان" }
+        ];
+        
+        sampleRatings.forEach(ratingData => {
+            const newRating = {
+                id: Date.now() + Math.random(),
+                productId: ratingData.productId,
+                rating: ratingData.rating,
+                date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+                user: ratingData.user
+            };
+            
+            addProductRating(newRating);
+        });
+        
+        console.log("تمت إضافة تقييمات تجريبية");
     }
 
     function setStarRating(rating) {
-        document.getElementById('selectedRating').textContent = rating;
-        highlightStars(rating);
-        
-        // تفعيل زر الإرسال
-        const submitBtn = document.getElementById('submitRating');
-        submitBtn.disabled = false;
+        const selectedRatingElement = document.getElementById('selectedRating');
+        if (selectedRatingElement) {
+            selectedRatingElement.textContent = rating;
+            highlightStars(rating);
+            
+            // تفعيل زر الإرسال
+            const submitBtn = document.getElementById('submitRating');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+            }
+        }
     }
 
     function highlightStars(rating) {
         const stars = document.querySelectorAll('.stars-input i');
-        stars.forEach((star, index) => {
-            if (index < rating) {
-                star.classList.add('active');
-                star.classList.remove('far');
-                star.classList.add('fas');
-            } else {
-                star.classList.remove('active');
-                star.classList.remove('fas');
-                star.classList.add('far');
-            }
-        });
+        if (stars.length > 0) {
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('fas');
+                    star.classList.remove('far');
+                    star.classList.add('active');
+                } else {
+                    star.classList.add('far');
+                    star.classList.remove('fas');
+                    star.classList.remove('active');
+                }
+            });
+        }
     }
 
     function submitRating() {
-        if (!currentProduct) return;
+        if (!currentProduct) {
+            showNotification(currentLanguage === 'ar' ? 'لم يتم تحديد منتج' : 'No product selected');
+            return;
+        }
         
         const rating = parseInt(document.getElementById('selectedRating').textContent);
         if (rating === 0) {
@@ -660,12 +746,18 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // طلب اسم المستخدم (اختياري)
+        const userName = prompt(currentLanguage === 'ar' 
+            ? 'أدخل اسمك (اختياري):' 
+            : 'Enter your name (optional):', 
+            'مستخدم');
+        
         const newRating = {
             id: Date.now(),
             productId: currentProduct.id,
             rating: rating,
             date: new Date().toISOString(),
-            user: 'مستخدم'
+            user: userName || 'مستخدم'
         };
         
         addProductRating(newRating);
@@ -674,9 +766,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // إعادة تعيين واجهة التقييم
         document.getElementById('selectedRating').textContent = '0';
         highlightStars(0);
-        document.getElementById('submitRating').disabled = true;
+        const submitBtn = document.getElementById('submitRating');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+        }
         
-        showNotification(currentLanguage === 'ar' ? 'شكراً لك! تم إضافة تقييمك بنجاح' : 'Thank you! Your rating has been added successfully');
+        showNotification(currentLanguage === 'ar' 
+            ? 'شكراً لك! تم إضافة تقييمك بنجاح' 
+            : 'Thank you! Your rating has been added successfully');
     }
 
     function addProductRating(rating) {
@@ -694,25 +791,21 @@ document.addEventListener('DOMContentLoaded', function() {
     function calculateAverageRating(ratings) {
         if (ratings.length === 0) return 0;
         const sum = ratings.reduce((total, rating) => total + rating.rating, 0);
-        return sum / ratings.length;
+        return (sum / ratings.length).toFixed(1);
     }
 
     function generateStarRating(averageRating) {
+        const rating = parseFloat(averageRating);
         let stars = '';
-        const fullStars = Math.floor(averageRating);
-        const hasHalfStar = averageRating % 1 >= 0.5;
         
-        for (let i = 0; i < fullStars; i++) {
-            stars += '<i class="fas fa-star"></i>';
-        }
-        
-        if (hasHalfStar) {
-            stars += '<i class="fas fa-star-half-alt"></i>';
-        }
-        
-        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-        for (let i = 0; i < emptyStars; i++) {
-            stars += '<i class="far fa-star"></i>';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= Math.floor(rating)) {
+                stars += '<i class="fas fa-star"></i>';
+            } else if (i - rating < 1 && i - rating > 0) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            } else {
+                stars += '<i class="far fa-star"></i>';
+            }
         }
         
         return stars;
@@ -724,22 +817,39 @@ document.addEventListener('DOMContentLoaded', function() {
         const totalRatings = ratings.length;
         
         // تحديث متوسط التقييم
-        document.getElementById('averageRating').textContent = averageRating.toFixed(1);
-        document.getElementById('totalRatings').textContent = totalRatings;
+        const avgRatingElement = document.getElementById('averageRating');
+        const totalRatingsElement = document.getElementById('totalRatings');
+        
+        if (avgRatingElement) avgRatingElement.textContent = averageRating;
+        if (totalRatingsElement) totalRatingsElement.textContent = totalRatings;
         
         // تحديث النجوم
         const averageStarsContainer = document.getElementById('averageRatingStars');
-        averageStarsContainer.innerHTML = generateStarRating(averageRating);
+        const quickRatingStarsContainer = document.getElementById('quickRatingStars');
+        
+        if (averageStarsContainer) {
+            averageStarsContainer.innerHTML = generateStarRating(averageRating);
+        }
+        
+        if (quickRatingStarsContainer) {
+            quickRatingStarsContainer.innerHTML = generateStarRating(averageRating);
+        }
+        
+        // تحديث التقييم السريع في أعلى الصفحة
+        const quickAvgRatingElement = document.getElementById('quickAverageRating');
+        const ratingCountElement = document.getElementById('ratingCount');
+        
+        if (quickAvgRatingElement) quickAvgRatingElement.textContent = averageRating;
+        if (ratingCountElement) ratingCountElement.textContent = totalRatings;
         
         // تحديث قائمة التقييمات
         updateRatingsList(ratings);
-        
-        // تحديث التقييم السريع في أعلى الصفحة
-        document.getElementById('ratingCount').textContent = totalRatings;
     }
 
     function updateRatingsList(ratings) {
         const container = document.getElementById('ratingsContainer');
+        
+        if (!container) return;
         
         if (ratings.length === 0) {
             container.innerHTML = '<div class="no-ratings">' + 
@@ -771,18 +881,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function formatDate(dateString) {
         const date = new Date(dateString);
-        return date.toLocaleDateString('ar-EG');
+        return date.toLocaleDateString('ar-EG', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     }
 
     // دالة لإنشاء عناصر المقاسات ديناميكياً
     function createSizeOptions(sizes) {
         let html = '';
         sizes.forEach(size => {
-            html += `
-                <div class="size-option" data-size="${size}">
-                    <span>${size}</span>
-                </div>
-            `;
+            if (size && size.trim() !== "") {
+                html += `
+                    <div class="size-option" data-size="${size}">
+                        <span>${size}</span>
+                    </div>
+                `;
+            }
         });
         return html;
     }
@@ -794,7 +910,7 @@ document.addEventListener('DOMContentLoaded', function() {
         orderProductName.textContent = product.name[currentLanguage];
         orderProductPrice.textContent = product.price + ' ' + (currentLanguage === 'ar' ? 'جنيه' : 'EGP');
         orderProductCode.textContent = product.code;
-        orderProductSize.textContent = selectedSize ? selectedSize : 'لم يتم اختيار مقاس';
+        orderProductSize.textContent = selectedSize ? selectedSize : (currentLanguage === 'ar' ? 'لم يتم اختيار مقاس' : 'Size not selected');
         
         // إعادة تعيين الحقول
         document.getElementById('customerName').value = '';
@@ -807,8 +923,10 @@ document.addEventListener('DOMContentLoaded', function() {
         orderModal.classList.add('active');
     }
 
-    // Show product detail page
+    // Show product detail page - إصلاح المشكلة الرئيسية هنا
     function showProductDetailPage(product) {
+        console.log("عرض تفاصيل المنتج:", product);
+        
         currentProduct = product;
         selectedSize = ''; // إعادة تعيين المقاس المختار
         
@@ -824,62 +942,113 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('productDetailTitle').textContent = product.name[currentLanguage];
         document.getElementById('productDetailPrice').textContent = product.price + ' ' + (currentLanguage === 'ar' ? 'جنيه' : 'EGP');
         document.getElementById('productDetailCode').textContent = product.code;
-        document.getElementById('productDetailImage').src = product.images[0];
+        
+        // Update main image
+        const productDetailImage = document.getElementById('productDetailImage');
+        if (product.images && product.images.length > 0) {
+            productDetailImage.src = product.images[0];
+            productDetailImage.alt = product.name[currentLanguage];
+        }
         
         // Update thumbnails
         const thumbnailsContainer = document.querySelector('.image-thumbnails');
         thumbnailsContainer.innerHTML = '';
         
-        product.images.forEach((image, index) => {
-            const thumbnail = document.createElement('div');
-            thumbnail.className = 'thumbnail' + (index === 0 ? ' active' : '');
-            thumbnail.innerHTML = '<img src="' + image + '" alt="' + product.name[currentLanguage] + '">';
-            
-            thumbnail.addEventListener('click', function() {
-                document.getElementById('productDetailImage').src = image;
-                // Update active thumbnail
-                document.querySelectorAll('.thumbnail').forEach(thumb => {
-                    thumb.classList.remove('active');
+        if (product.images && product.images.length > 0) {
+            product.images.forEach((image, index) => {
+                const thumbnail = document.createElement('div');
+                thumbnail.className = 'thumbnail' + (index === 0 ? ' active' : '');
+                thumbnail.innerHTML = '<img src="' + image + '" alt="' + product.name[currentLanguage] + '">';
+                
+                thumbnail.addEventListener('click', function() {
+                    document.getElementById('productDetailImage').src = image;
+                    // Update active thumbnail
+                    document.querySelectorAll('.thumbnail').forEach(thumb => {
+                        thumb.classList.remove('active');
+                    });
+                    thumbnail.classList.add('active');
                 });
-                thumbnail.classList.add('active');
+                
+                thumbnailsContainer.appendChild(thumbnail);
             });
-            
-            thumbnailsContainer.appendChild(thumbnail);
-        });
+        } else {
+            thumbnailsContainer.innerHTML = '<p>' + (currentLanguage === 'ar' ? 'لا توجد صور إضافية' : 'No additional images') + '</p>';
+        }
         
         // Update description
         const descriptionContent = document.querySelector('.description-content');
         descriptionContent.innerHTML = `
-            <p>${product.description[currentLanguage]}</p>
+            <p>${product.description[currentLanguage] || product.description.ar || (currentLanguage === 'ar' ? 'لا يوجد وصف للمنتج' : 'No product description')}</p>
+            <h4>${currentLanguage === 'ar' ? 'مواصفات المنتج:' : 'Product Specifications:'}</h4>
             <ul>
                 <li>${currentLanguage === 'ar' ? 'تصميم كلاسيكي أنيق' : 'Elegant classic design'}</li>
                 <li>${currentLanguage === 'ar' ? 'قماش عالي الجودة يوفر راحة طوال اليوم' : 'High-quality fabric provides all-day comfort'}</li>
-                <li>${currentLanguage === 'ar' ? 'ياقة كلاسيكية مع أزرار متناسقة' : 'Classic collar with coordinated buttons'}</li>
-                <li>${currentLanguage === 'ar' ? 'جيب صدر عملي' : 'Functional chest pocket'}</li>
                 <li>${currentLanguage === 'ar' ? 'تفصيل احترافي يضمن المتانة والمظهر الأنيق' : 'Professional finish ensures durability and elegant appearance'}</li>
+                <li>${currentLanguage === 'ar' ? 'تناسب مثالي للارتداء اليومي' : 'Perfect fit for daily wear'}</li>
             </ul>
         `;
         
         // تحديث عرض المقاسات الخاصة بالمنتج
         const sizeOptionsContainer = document.querySelector('.size-options');
         if (sizeOptionsContainer) {
-            sizeOptionsContainer.innerHTML = createSizeOptions(product.sizes);
+            sizeOptionsContainer.innerHTML = '';
             
-            // إضافة event listeners للمقاسات الجديدة
-            const sizeOptions = sizeOptionsContainer.querySelectorAll('.size-option');
-            sizeOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // إزالة التحديد من جميع المقاسات
-                    sizeOptions.forEach(opt => opt.classList.remove('active'));
-                    // تحديد المقاس المختار
-                    this.classList.add('active');
-                    selectedSize = this.getAttribute('data-size');
+            if (product.sizes && product.sizes.length > 0) {
+                product.sizes.forEach(size => {
+                    if (size && size.trim() !== "") {
+                        const sizeOption = document.createElement('div');
+                        sizeOption.className = 'size-option';
+                        sizeOption.textContent = size;
+                        sizeOption.dataset.size = size;
+                        
+                        sizeOption.addEventListener('click', function() {
+                            // إزالة التحديد من جميع المقاسات
+                            document.querySelectorAll('.size-option').forEach(opt => {
+                                opt.classList.remove('active');
+                            });
+                            // تحديد المقاس المختار
+                            this.classList.add('active');
+                            selectedSize = size;
+                            
+                            // تحديث نص المساعدة بالمقاس المختار
+                            const sizeHelp = document.querySelector('.size-help span');
+                            if (sizeHelp) {
+                                sizeHelp.textContent = currentLanguage === 'ar' 
+                                    ? `المقاس المختار: ${size}` 
+                                    : `Selected size: ${size}`;
+                            }
+                        });
+                        
+                        sizeOptionsContainer.appendChild(sizeOption);
+                    }
                 });
-            });
+                
+                // إذا لم تكن هناك مقاسات صالحة
+                if (sizeOptionsContainer.children.length === 0) {
+                    sizeOptionsContainer.innerHTML = `<div class="no-sizes">${currentLanguage === 'ar' ? 'لا توجد مقاسات متاحة' : 'No sizes available'}</div>`;
+                }
+            } else {
+                sizeOptionsContainer.innerHTML = `<div class="no-sizes">${currentLanguage === 'ar' ? 'لا توجد مقاسات متاحة' : 'No sizes available'}</div>`;
+            }
         }
         
         // تحديث عرض التقييمات
         updateProductRatingDisplay(product.id);
+        
+        // إعادة تهيئة نظام التقييمات
+        setTimeout(() => {
+            // إعادة تعيين النجوم
+            const selectedRatingElement = document.getElementById('selectedRating');
+            if (selectedRatingElement) {
+                selectedRatingElement.textContent = '0';
+            }
+            highlightStars(0);
+            
+            const submitBtn = document.getElementById('submitRating');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+            }
+        }, 100);
         
         // Load suggestions
         loadProductSuggestions(product);
@@ -888,17 +1057,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load product suggestions for detail page
     function loadProductSuggestions(product) {
         const suggestionsGrid = document.getElementById('productSuggestionsGrid');
+        if (!suggestionsGrid) return;
+        
         suggestionsGrid.innerHTML = '';
         
-        // Get complementary products based on category
-        let complementaryCategory = '';
-        if (product.category === 'shirts') complementaryCategory = 'pants';
-        else if (product.category === 'pants') complementaryCategory = 'shirts';
-        else complementaryCategory = 'pants';
+        // جمع جميع المنتجات من جميع الفئات
+        const allProducts = [];
+        for (const category in products) {
+            products[category].forEach(p => {
+                if (p.id !== product.id) { // استبعاد المنتج الحالي
+                    allProducts.push(p);
+                }
+            });
+        }
         
-        // Get 4 random products from complementary category
-        const complementaryProducts = [...products[complementaryCategory]];
-        const shuffled = complementaryProducts.sort(() => 0.5 - Math.random());
+        // اختيار 4 منتجات عشوائية
+        const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
         const selected = shuffled.slice(0, 4);
         
         selected.forEach(suggestion => {
@@ -909,7 +1083,8 @@ document.addEventListener('DOMContentLoaded', function() {
             suggestionCard.className = 'product-card';
             suggestionCard.innerHTML = `
                 <div class="product-img">
-                    <img src="${suggestion.images[0]}" alt="${suggestion.name[currentLanguage]}" loading="lazy">
+                    <img src="${suggestion.images[0]}" alt="${suggestion.name[currentLanguage]}" loading="lazy"
+                         onerror="this.src='images/default-product.jpg'">
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">${suggestion.name[currentLanguage]}</h3>
@@ -938,13 +1113,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const addToCartBtn = suggestionCard.querySelector('.add-to-cart-btn');
             addToCartBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
+                const tempProduct = currentProduct;
+                currentProduct = suggestion;
                 addToCart(suggestion);
+                currentProduct = tempProduct;
                 showNotification(currentLanguage === 'ar' ? 'تمت إضافة المنتج إلى السلة' : 'Product added to cart');
             });
             
             const buyNowBtn = suggestionCard.querySelector('.buy-now-btn');
             buyNowBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
+                currentProduct = suggestion;
                 openOrderForm(suggestion);
             });
             
@@ -959,7 +1138,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add product to cart
     function addToCart(product) {
         // التحقق من اختيار مقاس إذا كان المنتج له مقاسات
-        if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+        if (product.sizes && product.sizes.length > 0 && product.sizes.some(s => s.trim() !== "") && !selectedSize) {
             showNotification(currentLanguage === 'ar' ? 'يرجى اختيار المقاس أولاً' : 'Please select a size first');
             return;
         }
@@ -1016,7 +1195,9 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             notification.style.opacity = '0';
             setTimeout(() => {
-                document.body.removeChild(notification);
+                if (notification.parentNode) {
+                    document.body.removeChild(notification);
+                }
             }, 300);
         }, 3000);
     }
@@ -1212,7 +1393,7 @@ document.addEventListener('DOMContentLoaded', function() {
             rankElement.className = 'product-rank';
             rankElement.innerHTML = `
                 <div class="product-name">${index + 1}. ${product.name[currentLanguage] || product.name.ar}</div>
-                <div class="product-sales">${product.sales} مبيعات</div>
+                <div class="product-sales">${product.sales} ${currentLanguage === 'ar' ? 'مبيعات' : 'sales'}</div>
             `;
             topProductsContainer.appendChild(rankElement);
         });
@@ -1225,7 +1406,8 @@ document.addEventListener('DOMContentLoaded', function() {
         ordersContainer.innerHTML = '';
         
         if (recentOrders.length === 0) {
-            ordersContainer.innerHTML = '<p style="text-align: center; color: #666;">لا توجد طلبات حديثة</p>';
+            ordersContainer.innerHTML = '<p style="text-align: center; color: #666;">' + 
+                (currentLanguage === 'ar' ? 'لا توجد طلبات حديثة' : 'No recent orders') + '</p>';
             return;
         }
         
@@ -1238,7 +1420,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="order-date">${new Date(order.date).toLocaleDateString('ar-EG')}</span>
                 </div>
                 <div class="order-details">
-                    ${order.customer.name} - ${order.products.length} منتج - ${order.total} جنيه
+                    ${order.customer.name} - ${order.products.length} ${currentLanguage === 'ar' ? 'منتج' : 'products'} - ${order.total} ${currentLanguage === 'ar' ? 'جنيه' : 'EGP'}
                 </div>
             `;
             ordersContainer.appendChild(orderElement);
