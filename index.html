@@ -6,15 +6,16 @@
     <title>Teto Classic | حرفة سودانية بفخامة عالمية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="images/logo.jpg" type="image/jpeg">
 </head>
 <body>
     <!-- Header -->
     <header>
         <div class="header-container">
-            <button class="menu-btn" id="menuBtn">
+            <button class="menu-btn" id="menuBtn" aria-label="قائمة التنقل">
                 <i class="fas fa-bars"></i>
             </button>
-            <nav class="nav-menu" id="navMenu">
+            <nav class="nav-menu" id="navMenu" aria-label="القائمة الرئيسية">
                 <ul>
                     <li><a href="#" class="nav-link" data-category="home">الرئيسية</a></li>
                     <li><a href="#" class="nav-link" data-category="shirts">القمصان</a></li>
@@ -24,11 +25,11 @@
                 </ul>
             </nav>
             <div class="logo">
-                <img src="images/logo.jpg" alt="Teto Classic Logo" onerror="this.src='images/default-logo.jpg'">
+                <img src="images/logo.jpg" alt="Teto Classic Logo" width="150" height="50">
             </div>
             <div class="cart-section">
                 <div class="language-switcher">
-                    <button class="language-btn" id="languageBtn">
+                    <button class="language-btn" id="languageBtn" aria-label="تغيير اللغة">
                         <i class="fas fa-globe"></i>
                     </button>
                     <div class="language-options" id="languageOptions">
@@ -42,7 +43,7 @@
                     </div>
                 </div>
                 
-                <button class="cart-btn" id="cartBtn">
+                <button class="cart-btn" id="cartBtn" aria-label="سلة التسوق">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count">0</span>
                 </button>
@@ -62,8 +63,8 @@
                         "التميز ليس للجميع ، بل هو لأولئك الذين يفعلون كل ما يلزم 🥇"
                     </div>
                     <div class="contact-info">
-                        <p>📞: +201275533360</p>
-                        <p>📍: SUG 🇸🇩 - EGP 🇪🇬</p>
+                        <p><i class="fas fa-phone"></i> +201275533360</p>
+                        <p><i class="fas fa-map-marker-alt"></i> SUG 🇸🇩 - EGP 🇪🇬</p>
                         <p>"#تميزك_سر_نجاحك 🖤🏆"</p>
                     </div>
                 </div>
@@ -71,48 +72,48 @@
                 <h2 class="section-title">آراء العملاء</h2>
                 <div class="reviews">
                     <div class="review-img">
-                        <img src="images/revew 1.jpg" alt="رأي العميل 1" onerror="this.src='images/default-review.jpg'">
+                        <img src="images/revew 1.jpg" alt="رأي العميل 1" loading="lazy">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 2.jpg" alt="رأي العميل 2" onerror="this.src='images/default-review.jpg'">
+                        <img src="images/revew 2.jpg" alt="رأي العميل 2" loading="lazy">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 3.jpg" alt="رأي العميل 3" onerror="this.src='images/default-review.jpg'">
+                        <img src="images/revew 3.jpg" alt="رأي العميل 3" loading="lazy">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 4.jpg" alt="رأي العميل 4" onerror="this.src='images/default-review.jpg'">
+                        <img src="images/revew 4.jpg" alt="رأي العميل 4" loading="lazy">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 5.jpg" alt="رأي العميل 5" onerror="this.src='images/default-review.jpg'">
+                        <img src="images/revew 5.jpg" alt="رأي العميل 5" loading="lazy">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 6.jpg" alt="رأي العميل 6" onerror="this.src='images/default-review.jpg'">
+                        <img src="images/revew 6.jpg" alt="رأي العميل 6" loading="lazy">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 7.jpg" alt="رأي العميل 7" onerror="this.src='images/default-review.jpg'">
+                        <img src="images/revew 7.jpg" alt="رأي العميل 7" loading="lazy">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 8.jpg" alt="رأي العميل 8" onerror="this.src='images/default-review.jpg'">
+                        <img src="images/revew 8.jpg" alt="رأي العميل 8" loading="lazy">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 9.jpg" alt="رأي العميل 9" onerror="this.src='images/default-review.jpg'">
+                        <img src="images/revew 9.jpg" alt="رأي العميل 9" loading="lazy">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 10.jpg" alt="رأي العميل 10" onerror="this.src='images/default-review.jpg'">
+                        <img src="images/revew 10.jpg" alt="رأي العميل 10" loading="lazy">
                     </div>
                 </div>
 
                 <div class="social-media">
-                    <a href="https://www.instagram.com/teto_classic_egy?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="social-icon" target="_blank">
+                    <a href="https://www.instagram.com/teto_classic_egy?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="social-icon" target="_blank" aria-label="انستغرام">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="https://l.instagram.com/?u=https%3A%2F%2Fwww.tiktok.com%2F%40teto_classic%3F_t%3D8nck24dYXH5%26_r%3D1%26fbclid%3DPAZXh0bgNhZW0CMTEAAacSe72EK3Hu0Ea8la_nvC_P9r0MRD-YcNTkYLy_2bISoEr_JrBE7xfEbcdv0Q_aem_OhuYoQNQMX8103C2YjXMMA&e=AT1T539Omxnyc5-hj8hBm4fucl51WLpbut3ILo7VX5Jq9kccqxUcjjhvmx0Dk0Vbc7Mzcrd6U2QcYl02IwStpxsfMKPCHHd4cJujvfZ9xQ" class="social-icon" target="_blank">
+                    <a href="https://l.instagram.com/?u=https%3A%2F%2Fwww.tiktok.com%2F%40teto_classic%3F_t%3D8nck24dYXH5%26_r%3D1%26fbclid%3DPAZXh0bgNhZW0CMTEAAacSe72EK3Hu0Ea8la_nvC_P9r0MRD-YcNTkYLy_2bISoEr_JrBE7xfEbcdv0Q_aem_OhuYoQNQMX8103C2YjXMMA&e=AT1T539Omxnyc5-hj8hBm4fucl51WLpbut3ILo7VX5Jq9kccqxUcjjhvmx0Dk0Vbc7Mzcrd6U2QcYl02IwStpxsfMKPCHHd4cJujvfZ9xQ" class="social-icon" target="_blank" aria-label="تيك توك">
                         <i class="fab fa-tiktok"></i>
                     </a>
-                    <a href="https://l.instagram.com/?u=http%3A%2F%2Fwa.me%2F201275533360%3Ffbclid%3DPAZXh0bgNhZW0CMTEAAadXbT0Iq0Zw0el0EbP_3X9tdBfjoOEWUFj0cOVmfSBDEEMYEBfqeWTdizVWBQ_aem_mHLHHoUNVxbP2Uxn-tkarg&e=AT0nsTRTU9Jpx9RS1klBjL54lxrKBgUwTiopS3OvyTn7fYUl6CoIAdFLZbURPevsowvp_tKQkdlN64jUuP_exj4IlXIY_yvhUk0QoLl1gw" class="social-icon" target="_blank">
+                    <a href="https://l.instagram.com/?u=http%3A%2F%2Fwa.me%2F201275533360%3Ffbclid%3DPAZXh0bgNhZW0CMTEAAadXbT0Iq0Zw0el0EbP_3X9tdBfjoOEWUFj0cOVmfSBDEEMYEBfqeWTdizVWBQ_aem_mHLHHoUNVxbP2Uxn-tkarg&e=AT0nsTRTU9Jpx9RS1klBjL54lxrKBgUwTiopS3OvyTn7fYUl6CoIAdFLZbURPevsowvp_tKQkdlN64jUuP_exj4IlXIY_yvhUk0QoLl1gw" class="social-icon" target="_blank" aria-label="واتساب">
                         <i class="fab fa-whatsapp"></i>
                     </a>
-                    <a href="https://www.facebook.com/share/1A8UKTLbxp/" class="social-icon" target="_blank">
+                    <a href="https://www.facebook.com/share/1A8UKTLbxp/" class="social-icon" target="_blank" aria-label="فيسبوك">
                         <i class="fab fa-facebook-f"></i>
                     </a>
                 </div>
@@ -152,7 +153,9 @@
             <div class="container">
                 <div class="product-detail-container">
                     <div class="breadcrumb">
-                        <a href="#" class="back-to-products"><i class="fas fa-arrow-right"></i> العودة إلى المنتجات</a>
+                        <a href="#" class="back-to-products" id="backToProducts">
+                            <i class="fas fa-arrow-right"></i> العودة إلى المنتجات
+                        </a>
                     </div>
                     
                     <div class="product-detail-content">
@@ -160,7 +163,7 @@
                             <div class="main-image">
                                 <img id="productDetailImage" src="" alt="Product Image">
                             </div>
-                            <div class="image-thumbnails">
+                            <div class="image-thumbnails" id="imageThumbnails">
                                 <!-- Thumbnails will be added by JavaScript -->
                             </div>
                         </div>
@@ -190,15 +193,15 @@
                                 <span>عرض محدود! ينتهي خلال 3 أيام</span>
                             </div>
                             
-                            <!-- Size Selection - سيتم تعبئته ديناميكياً بناءً على المنتج -->
+                            <!-- Size Selection -->
                             <div class="size-selection">
                                 <h3>اختر المقاس:</h3>
-                                <div class="size-options">
+                                <div class="size-options" id="sizeOptions">
                                     <!-- Size options will be dynamically generated by JavaScript -->
                                 </div>
                                 <div class="size-help">
                                     <i class="fas fa-question-circle"></i>
-                                    <span>يرجى اختيار المقاس المناسب</span>
+                                    <span id="sizeHelpText">يرجى اختيار المقاس المناسب</span>
                                 </div>
                             </div>
                             
@@ -238,7 +241,7 @@
                     <!-- Product Description -->
                     <div class="product-description">
                         <h3>تفاصيل المنتج</h3>
-                        <div class="description-content">
+                        <div class="description-content" id="descriptionContent">
                             <!-- Description will be dynamically generated -->
                         </div>
                     </div>
@@ -259,7 +262,7 @@
                         <div class="add-rating">
                             <h4>أضف تقييمك</h4>
                             <div class="rating-input">
-                                <div class="stars-input">
+                                <div class="stars-input" id="starsInput">
                                     <i class="far fa-star" data-rating="1"></i>
                                     <i class="far fa-star" data-rating="2"></i>
                                     <i class="far fa-star" data-rating="3"></i>
@@ -297,7 +300,7 @@
         <!-- Order Form Modal -->
         <div class="order-modal" id="orderModal">
             <div class="order-container">
-                <button class="close-order" id="closeOrder">
+                <button class="close-order" id="closeOrder" aria-label="إغلاق">
                     <i class="fas fa-times"></i>
                 </button>
                 <div class="order-content">
@@ -351,7 +354,7 @@
         <!-- Cart Modal -->
         <div class="cart-modal" id="cartModal">
             <div class="cart-container">
-                <button class="close-cart" id="closeCart">
+                <button class="close-cart" id="closeCart" aria-label="إغلاق السلة">
                     <i class="fas fa-times"></i>
                 </button>
                 <div class="cart-content">
@@ -372,20 +375,15 @@
         <div class="footer-container">
             <div class="footer-links">
                 <a href="#">سياسة الخصوصية</a>
-                <a href="https://www.instagram.com/p/DMcNPKMISOm/?img_index=1&igsh=MWdjYng5cGFhc2dteA==">الاسئلة الشائعة</a>         
+                <a href="https://www.instagram.com/p/DMcNPKMISOm/?img_index=1&igsh=MWdjYng5cGFhc2dteA==" target="_blank">الأسئلة الشائعة</a>         
             </div>
             <div class="copyright">
-                2025 Teto Classic. جميع الحقوق محفوظة.
+                <p>2025 Teto Classic. جميع الحقوق محفوظة.</p>
+                <p>تصميم وتطوير بفخر سوداني 🇸🇩</p>
             </div>
         </div>
     </footer>
 
-    <!-- Admin Statistics Button (Hidden by default) -->
-    <button class="admin-stats-btn" id="statsBtn" style="display: none;">
-        <i class="fas fa-chart-bar"></i>
-    </button>
-
-   
     <script src="main.js"></script>
 </body>
 </html>
