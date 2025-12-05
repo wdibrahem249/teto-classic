@@ -1,7 +1,8 @@
-// main.js
-// إصلاح نظام التقييمات ومشكلة تفاصيل المنتج المشتركة
+// main.js - النسخة الكاملة بدون نظام الإحصائيات
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Teto Classic - Initializing...');
+    
     // Elements
     const menuBtn = document.getElementById('menuBtn');
     const navMenu = document.getElementById('navMenu');
@@ -21,11 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const backToProducts = document.querySelector('.back-to-products');
     const addToCartBtn = document.getElementById('addToCartBtn');
     const buyNowBtn = document.getElementById('buyNowBtn');
-    const statsBtn = document.getElementById('statsBtn');
-    const adminStats = document.querySelector('.admin-stats');
-    const closeStats = document.getElementById('closeStats');
-    const exportStats = document.getElementById('exportStats');
-    const resetStats = document.getElementById('resetStats');
+    const submitRatingBtn = document.getElementById('submitRating');
     
     // Order form elements
     const orderProductImage = document.getElementById('orderProductImage');
@@ -40,41 +37,32 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentLanguage = 'ar';
     let currentProduct = null;
     let selectedSize = '';
+    let currentUserRating = 0;
     
-    // Statistics data
-    let siteStats = {
-        totalVisitors: 0,
-        totalOrders: 0,
-        totalSales: 0,
-        monthlyVisitors: 0,
-        dailyVisits: {},
-        orders: [],
-        topProducts: {}
-    };
-
-    // بيانات التقييمات
+    // بيانات التقييمات المشتركة بين جميع المستخدمين
     let productRatings = {};
 
-    // Sample products data - إضافة صور حقيقية لكل منتج
+    // Sample products data
     const products = {
         shirts: [
             {
                 id: 1,
                 code: 'A-4',
                 name: {
-                    ar: 'قميص كاروهات سادة ',
-                    en: 'carohat Shirt'
+                    ar: 'قميص كاروهات سادة',
+                    en: 'Plaid Solid Shirt'
                 },
                 price: 449,
-                images: [
-                    'images/shirt.1.1.jpg',
-                    'images/shirt.1.2.jpg',
-                ],
+                images: ['images/shirt.1.1.jpg', 'images/shirt.1.2.jpg'],
                 category: 'shirts',
                 sizes: ["", "", "", "2XL"],
                 description: {
                     ar: 'قميص كلاسيكي مصمم بأناقة مع تفاصيل عالية الجودة. مثالي للمناسبات الرسمية والعملية.',
                     en: 'Classic shirt elegantly designed with high-quality details. Perfect for formal and business occasions.'
+                },
+                features: {
+                    ar: ['قماش قطن 100%', 'ياقة كلاسيكية', 'أزرار معدنية', 'تناسب مريح'],
+                    en: ['100% Cotton fabric', 'Classic collar', 'Metal buttons', 'Comfortable fit']
                 }
             },
             {
@@ -85,16 +73,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     en: 'Olive Green Shirt'
                 },
                 price: 399,
-                images: [
-                    'images/shirt.2.1.jpg',
-                    'images/shirt.2.2.jpg',
-                    'images/shirt.2.3.jpg',
-                ],
+                images: ['images/shirt.2.1.jpg', 'images/shirt.2.2.jpg', 'images/shirt.2.3.jpg'],
                 category: 'shirts',
                 sizes: ["", "L", "", ""],
                 description: {
-                    ar: 'قميص زيتي فاخر سناسب كل المناسبات والمشاوير الرسمية.',
-                    en: 'olive green shirt luxuour for all formal occasions with elegant and modern design.'
+                    ar: 'قميص زيتي فاخر يناسب كل المناسبات والمشاوير الرسمية.',
+                    en: 'Luxurious olive green shirt suitable for all formal occasions and outings.'
+                },
+                features: {
+                    ar: ['لون زيتي أنيق', 'تصميم عصري', 'جودة عالية', 'راحة طوال اليوم'],
+                    en: ['Elegant olive color', 'Modern design', 'High quality', 'All-day comfort']
                 }
             },
             {
@@ -102,38 +90,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 code: 'A-1',
                 name: {
                     ar: 'قميص كتان فاخر كم طويل لون جنزاوي',
-                    en: 'luxurious long-sleeved linen shirt in a denim color'
+                    en: 'Luxurious Long-sleeved Linen Shirt in Denim Color'
                 },
                 price: 449,
-                images: [
-                    'images/shirt.3.1.jpg',
-                    'images/shirt.3.2.jpg',
-                    'images/shirt.3.3.jpg',
-                ],
+                images: ['images/shirt.3.1.jpg', 'images/shirt.3.2.jpg', 'images/shirt.3.3.jpg'],
                 category: 'shirts',
                 sizes: ["", "", "L"],
                 description: {
                     ar: 'قميص جنزاوي كلاسيكي يعكس الأناقة والثقة، مثالي للقاءات المهمة.',
                     en: 'Classic denim shirt reflecting elegance and confidence, perfect for important meetings.'
+                },
+                features: {
+                    ar: ['قماش كتان طبيعي', 'لون جنزاوي كلاسيكي', 'كم طويل', 'تنفس ممتاز'],
+                    en: ['Natural linen fabric', 'Classic denim color', 'Long sleeves', 'Excellent breathability']
                 }
             },
             {
                 id: 4,
                 code: 'A-7',
                 name: {
-                    ar: 'قميص قطن حلاوي سادة ',
-                    en: 'powder-pink shirt'
+                    ar: 'قميص قطن حلاوي سادة',
+                    en: 'Powder Pink Solid Cotton Shirt'
                 },
                 price: 424,
-                images: [
-                    'images/shirt.4.1.jpg',
-                    
-                ],
+                images: ['images/shirt.4.1.jpg'],
                 category: 'shirts',
                 sizes: ["", "3XL", "2XL"],
                 description: {
-                    ar: 'قميص حلاوي سادة بكم طويل, يعكس الأناقة والثقة، مثالي للقاءات المهمة.',
-                    en: 'A long-sleeve shirt in powder-pink, designed to reflect elegance and confidense'
+                    ar: 'قميص حلاوي سادة بكم طويل، يعكس الأناقة والثقة، مثالي للقاءات المهمة.',
+                    en: 'Long-sleeve shirt in powder pink, designed to reflect elegance and confidence.'
+                },
+                features: {
+                    ar: ['لون حلاوي ناعم', 'قماش قطن ناعم', 'تصميم بسيط وأنيق', 'مناسب للعمل والمناسبات'],
+                    en: ['Soft powder pink color', 'Smooth cotton fabric', 'Simple elegant design', 'Suitable for work and occasions']
                 }
             },
             {
@@ -141,18 +130,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 code: 'C-3',
                 name: {
                     ar: 'قميص قطن حلاوي مخطط',
-                    en: 'Striped powder-pink Cotton shirt'
+                    en: 'Striped Powder Pink Cotton Shirt'
                 },
                 price: 424,
-                images: [
-                    'images/shirt.5.1.jpg',
-                    
-                ],
+                images: ['images/shirt.5.1.jpg'],
                 category: 'shirts',
                 sizes: ["", "M", "2XL"],
                 description: {
-                    ar: 'قميص حلاوي مخطط بكم طويل, يعكس الأناقة والثقة، مثالي للقاءات المهمة.',
-                    en: 'A long-sleeve shirt in powder-pink with sriped, designed to reflect elegance and confidense'
+                    ar: 'قميص حلاوي مخطط بكم طويل، يعكس الأناقة والثقة، مثالي للقاءات المهمة.',
+                    en: 'Long-sleeve shirt in powder pink with stripes, designed to reflect elegance and confidence.'
+                },
+                features: {
+                    ar: ['مخططات أفقية', 'لون حلاوي فاتح', 'قماش قطن مريح', 'تصميم عصري'],
+                    en: ['Horizontal stripes', 'Light powder pink color', 'Comfortable cotton fabric', 'Modern design']
                 }
             },
             {
@@ -160,76 +150,79 @@ document.addEventListener('DOMContentLoaded', function() {
                 code: 'A-2',
                 name: {
                     ar: 'قميص كحلي فاخر',
-                    en: 'Luxuour navy shirt'
+                    en: 'Luxurious Navy Shirt'
                 },
                 price: 449,
-                images: [
-                    'images/shirt.6.1.jpg',
-                    'images/shirt.6.2.jpg',
-                ],
+                images: ['images/shirt.6.1.jpg', 'images/shirt.6.2.jpg'],
                 category: 'shirts',
                 sizes: ["", "", "L"],
                 description: {
-                    ar: 'قميص كحلي فاخر بكم طويل, يعكس الأناقة والثقة، مثالي للقاءات الرسمية.',
-                    en: 'A luxuour navy long-sleeve shirt, designed for formal occasions'
+                    ar: 'قميص كحلي فاخر بكم طويل، يعكس الأناقة والثقة، مثالي للقاءات الرسمية.',
+                    en: 'Luxurious navy long-sleeve shirt, designed for formal occasions.'
+                },
+                features: {
+                    ar: ['لون كحلي عميق', 'جودة فاخرة', 'تناسب رسمي', 'مناسب للعمل'],
+                    en: ['Deep navy color', 'Luxurious quality', 'Formal fit', 'Suitable for work']
                 }
             },
             {
                 id: 7,
-                code: 'A-9',
+                code: 'A-2',
                 name: {
                     ar: 'قميص مخطط رمادي',
-                    en: 'Striped Gray shirt'
+                    en: 'Striped Gray Shirt'
                 },
                 price: 449,
-                images: [
-                    'images/shirt.7.1.jpg',
-                    'images/shirt.7.2.jpg',
-                ],
+                images: ['images/shirt.7.1.jpg', 'images/shirt.7.2.jpg'],
                 category: 'shirts',
                 sizes: ["", "", "2XL"],
                 description: {
-                    ar: 'قميص رمادي مخطط فاخر بكم طويل, يعكس الأناقة والثقة، مثالي للقاءات الرسمية.',
-                    en: 'A luxurious long-sleeve striped gray shirt, designed for formal occasions'
+                    ar: 'قميص رمادي مخطط فاخر بكم طويل، يعكس الأناقة والثقة، مثالي للقاءات الرسمية.',
+                    en: 'Luxurious long-sleeve striped gray shirt, designed for formal occasions.'
+                },
+                features: {
+                    ar: ['مخططات رمادية', 'تصميم رسمي', 'جودة عالية', 'تناسب مثالي'],
+                    en: ['Gray stripes', 'Formal design', 'High quality', 'Perfect fit']
                 }
             },
             {
                 id: 8,
                 code: 'C-1',
                 name: {
-                    ar: 'قميص اسود',
-                    en: 'Black shirt'
+                    ar: 'قميص أسود',
+                    en: 'Black Shirt'
                 },
                 price: 349,
-                images: [
-                    'images/shirt.8.1.jpg',
-                    'images/shirt.8.2.jpg',
-                ],
+                images: [ 'images/shirt.8.2.jpg'],
                 category: 'shirts',
                 sizes: ["", "L", "XL"],
                 description: {
-                    ar: 'قميص اسود فاخر بكم طويل, يعكس الأناقة والثقة، مثالي للقاءات الرسمية.',
-                    en: 'A luxurious long-sleeve black shirt, designed for formal occasions'
+                    ar: 'قميص أسود فاخر بكم طويل، يعكس الأناقة والثقة، مثالي للقاءات الرسمية.',
+                    en: 'Luxurious long-sleeve black shirt, designed for formal occasions.'
+                },
+                features: {
+                    ar: ['لون أسود كلاسيكي', 'مناسب لجميع المناسبات', 'جودة عالية', 'راحة ممتازة'],
+                    en: ['Classic black color', 'Suitable for all occasions', 'High quality', 'Excellent comfort']
                 }
             },
-             {
+            {
                 id: 9,
                 code: 'B-6',
                 name: {
-                    ar: 'قميص كاروهات اسود',
-                    en: 'Black carohat shirt'
+                    ar: 'قميص كاروهات أسود',
+                    en: 'Black Plaid Shirt'
                 },
                 price: 349,
-                images: [
-                    'images/shirt.9.1.jpg',
-                    'images/shirt.9.2.jpg',
-                    'images/shirt.9.3.jpg',
-                ],
+                images: ['images/shirt.9.1.jpg', 'images/shirt.9.2.jpg', 'images/shirt.9.3.jpg'],
                 category: 'shirts',
                 sizes: ["", "", "2XL"],
                 description: {
-                    ar: 'قميص كاروهات اسود راقي بكم طويل..',
-                    en: 'A classy black carohat shirt long-sleeve shirt'
+                    ar: 'قميص كاروهات أسود راقي بكم طويل.',
+                    en: 'Classy black plaid long-sleeve shirt.'
+                },
+                features: {
+                    ar: ['كاروهات أنيقة', 'لون أسود عميق', 'تصميم ريترو', 'قماش دافئ'],
+                    en: ['Elegant plaid', 'Deep black color', 'Retro design', 'Warm fabric']
                 }
             },
             {
@@ -237,19 +230,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 code: 'B-7',
                 name: {
                     ar: 'قميص بيجي سادة',
-                    en: 'beagy shirt'
+                    en: 'Beige Solid Shirt'
                 },
                 price: 449,
-                images: [
-                    'images/shirt.10.1.jpg',
-                    'images/shirt.10.2.jpg',
-                    'images/shirt.10.3.jpg',
-                ],
+                images: ['images/shirt.10.1.jpg', 'images/shirt.10.2.jpg', 'images/shirt.10.3.jpg'],
                 category: 'shirts',
                 sizes: ["", "", "2XL"],
                 description: {
-                    ar: 'قميص بيجي راقي بكم طويل..',
-                    en: 'A classy beagy shirt long-sleeve shirt'
+                    ar: 'قميص بيجي راقي بكم طويل.',
+                    en: 'Classy beige long-sleeve shirt.'
+                },
+                features: {
+                    ar: ['لون بيجي محايد', 'مناسب للجميع', 'جودة عالية', 'راحة طويلة الأمد'],
+                    en: ['Neutral beige color', 'Suitable for everyone', 'High quality', 'Long-lasting comfort']
                 }
             },
             {
@@ -257,77 +250,79 @@ document.addEventListener('DOMContentLoaded', function() {
                 code: 'B-8',
                 name: {
                     ar: 'قميص كاروهات',
-                    en: 'carohat shirt'
+                    en: 'Plaid Shirt'
                 },
                 price: 424,
-                images: [
-                    'images/shirt.11.1.jpg',
-                    'images/shirt.11.2.jpg',
-                    'images/shirt.11.3.jpg',
-                ],
+                images: ['images/shirt.11.1.jpg', 'images/shirt.11.2.jpg', 'images/shirt.11.3.jpg'],
                 category: 'shirts',
                 sizes: ["", "3XL", "2XL"],
                 description: {
-                    ar: 'قميص كاروهات راقي بكم طويل..',
-                    en: 'A classy  carohat shirt long-sleeve shirt'
+                    ar: 'قميص كاروهات راقي بكم طويل.',
+                    en: 'Classy plaid long-sleeve shirt.'
+                },
+                features: {
+                    ar: ['كاروهات كلاسيكية', 'ألوان متناغمة', 'جودة ممتازة', 'مناسب للخارج'],
+                    en: ['Classic plaid', 'Harmonious colors', 'Excellent quality', 'Suitable for outdoors']
                 }
             },
             {
                 id: 12,
                 code: 'B-9',
                 name: {
-                    ar: 'قميص كاروهات ابيض',
-                    en: 'white carohat shirt'
+                    ar: 'قميص كاروهات أبيض',
+                    en: 'White Plaid Shirt'
                 },
                 price: 424,
-                images: [
-                    'images/shirt.12.1.jpg',
-                    'images/shirt.12.2.jpg',
-                ],
+                images: ['images/shirt.12.1.jpg', 'images/shirt.12.2.jpg'],
                 category: 'shirts',
                 sizes: ["L", "XL", "2XL", "3XL"],
                 description: {
-                    ar: 'قميص كاروهات ابيض مخطط اسود راقي بكم طويل..',
-                    en: 'A classy white carohat shirt long-sleeve shirt'
+                    ar: 'قميص كاروهات أبيض مخطط أسود راقي بكم طويل.',
+                    en: 'Classy white plaid shirt with black stripes, long-sleeve.'
+                },
+                features: {
+                    ar: ['أبيض نقي', 'مخططات سوداء', 'تباين جميل', 'مناسب للصيف'],
+                    en: ['Pure white', 'Black stripes', 'Beautiful contrast', 'Suitable for summer']
                 }
             },
             {
                 id: 13,
                 code: 'A-10',
                 name: {
-                    ar: 'قميص اخضر فاتح',
-                    en: 'white green shirt'
+                    ar: 'قميص أخضر فاتح',
+                    en: 'Light Green Shirt'
                 },
                 price: 424,
-                images: [
-                    'images/shirt.13.1.jpg',
-                    'images/shirt.13.2.jpg',
-                ],
+                images: ['images/shirt.13.1.jpg', 'images/shirt.13.2.jpg'],
                 category: 'shirts',
                 sizes: ["L", "", "2XL", ""],
                 description: {
-                    ar: 'قميص اخضر فاتح مناسب للطلعات البسيطة راقي بكم طويل..',
-                    en: 'A classy white-green shirt long-sleeve shirt'
+                    ar: 'قميص أخضر فاتح مناسب للطلعات البسيطة راقي بكم طويل.',
+                    en: 'Classy light green long-sleeve shirt suitable for casual outings.'
+                },
+                features: {
+                    ar: ['لون أخضر منعش', 'خفة الوزن', 'تهوية جيدة', 'مناسب للطقس الدافئ'],
+                    en: ['Refreshing green color', 'Lightweight', 'Good ventilation', 'Suitable for warm weather']
                 }
             },
-           {
+            {
                 id: 14,
                 code: 'A-6',
                 name: {
                     ar: 'قميص لبني فاتح',
-                    en: 'white BLUE shirt'
+                    en: 'Light Blue Shirt'
                 },
                 price: 449,
-                images: [
-                    'images/shirt.14.1.jpg',
-                    'images/shirt.14.2.jpg',
-                    'images/shirt.14.3.jpg',
-                ],
+                images: ['images/shirt.14.1.jpg', 'images/shirt.14.2.jpg', 'images/shirt.14.3.jpg'],
                 category: 'shirts',
                 sizes: ["L", "", "2XL", "3XL"],
                 description: {
-                    ar: 'قميص لبني فاتح مناسب للطلعات البسيطة راقي بكم طويل..',
-                    en: 'A classy white-blue shirt long-sleeve shirt'
+                    ar: 'قميص لبني فاتح مناسب للطلعات البسيطة راقي بكم طويل.',
+                    en: 'Classy light blue long-sleeve shirt suitable for casual outings.'
+                },
+                features: {
+                    ar: ['لون أزرق فاتح', 'نعومة فائقة', 'لمسة ناعمة', 'مناسب للعمل'],
+                    en: ['Light blue color', 'Super soft', 'Soft touch', 'Suitable for work']
                 }
             },
             {
@@ -335,18 +330,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 code: 'C-2',
                 name: {
                     ar: 'قميص كبدي سادة',
-                    en: 'Dark Maroon Shirt'
+                    en: 'Dark Maroon Solid Shirt'
                 },
                 price: 499,
-                images: [
-                    'images/shirt.15.1.jpeg',
-                    
-                ],
+                images: ['images/shirt.15.1.jpeg'],
                 category: 'shirts',
                 sizes: ["2XL", "4XL", "5XL", ""],
                 description: {
                     ar: 'قميص كبدي سادة فاخر مناسب للطلعات البسيطة راقي بكم طويل',
-                    en: 'A classy dark maroon shirt shirt long-sleeve shirt'
+                    en: 'Classy dark maroon solid shirt, luxurious, suitable for casual outings, long-sleeve.'
+                },
+                features: {
+                    ar: ['لون كبدي غني', 'لمسة فاخرة', 'مقاسات كبيرة', 'جودة استثنائية'],
+                    en: ['Rich maroon color', 'Luxurious touch', 'Large sizes', 'Exceptional quality']
                 }
             },
             {
@@ -357,54 +353,76 @@ document.addEventListener('DOMContentLoaded', function() {
                     en: 'Striped Sky-blue Shirt'
                 },
                 price: 424,
-                images: [
-                    'images/shirt.16.1.jpeg',
-                    'images/shirt.16.2.jpeg',
-                ],
+                images: ['images/shirt.16.1.jpeg', 'images/shirt.16.2.jpeg'],
                 category: 'shirts',
                 sizes: ["", "", "2XL", ""],
                 description: {
                     ar: 'قميص مخطط سماوي فاخر مناسب للطلعات البسيطة راقي بكم طويل',
-                    en: 'A classy striped sky-blue shirt shirt long-sleeve shirt'
+                    en: 'Classy striped sky-blue shirt, luxurious, suitable for casual outings.'
+                },
+                features: {
+                    ar: ['لون سماوي جميل', 'مخططات رفيعة', 'شكل رياضي', 'راحة ممتازة'],
+                    en: ['Beautiful sky-blue color', 'Thin stripes', 'Sporty look', 'Excellent comfort']
                 }
             },
-             {
+            {
                 id: 17,
                 code: 'B-15',
                 name: {
                     ar: 'قميص كاروهات زيتي',
-                    en: 'dark green carohat Shirt'
+                    en: 'Dark Green Plaid Shirt'
                 },
                 price: 424,
-                images: [
-                    'images/shirt.17.1.jpeg',
-                    
-                ],
+                images: ['images/shirt.17.1.jpeg'],
                 category: 'shirts',
                 sizes: ["", "", "2XL", ""],
                 description: {
                     ar: 'قميص كاروهات زيتي فاخر مناسب للطلعات البسيطة راقي بكم طويل',
-                    en: 'A classy carohat dark green shirt shirt long-sleeve shirt'
+                    en: 'Classy dark green plaid shirt, luxurious, suitable for casual outings.'
+                },
+                features: {
+                    ar: ['لون زيتي عميق', 'كاروهات كلاسيكية', 'مناسب للخريف', 'جودة عالية'],
+                    en: ['Deep olive color', 'Classic plaid', 'Suitable for autumn', 'High quality']
                 }
             },
             {
                 id: 18,
                 code: 'B-2',
                 name: {
-                    ar: 'قميص كاروهات اسود',
-                    en: 'black carohat Shirt'
+                    ar: 'قميص كاروهات أسود',
+                    en: 'Black Plaid Shirt'
                 },
                 price: 449,
-                images: [
-                    'images/shirt.18.1.jpeg',
-                    'images/shirt.18.2.jpeg',
-                    'images/shirt.18.3.jpeg',
-                ],
+                images: ['images/shirt.18.1.jpeg', 'images/shirt.18.2.jpeg', 'images/shirt.18.3.jpeg'],
                 category: 'shirts',
                 sizes: ["", "M", "2XL", ""],
                 description: {
-                    ar: 'قميص اسود كاروهات فاخر مناسب للطلعات البسيطة راقي بكم طويل',
-                    en: 'A classy carohat black shirt shirt long-sleeve shirt'
+                    ar: 'قميص أسود كاروهات فاخر مناسب للطلعات البسيطة راقي بكم طويل',
+                    en: 'Classy black plaid shirt, luxurious, suitable for casual outings.'
+                },
+                features: {
+                    ar: ['كاروهات سوداء', 'تصميم أنيق', 'مناسب للجميع', 'جودة فاخرة'],
+                    en: ['Black plaid', 'Elegant design', 'Suitable for everyone', 'Luxurious quality']
+                }
+            },
+            {
+                id: 19,
+                code: 'A-5',
+                name: {
+                    ar: 'قميص أسود قطن',
+                    en: 'cotton Black Shirt'
+                },
+                price: 424,
+                images: [ 'images/shirt.8.1.jpg'],
+                category: 'shirts',
+                sizes: ["L", "2XL", "3XL"],
+                description: {
+                    ar: 'قميص أسود قطن بكم طويل، يعكس الأناقة والثقة، مثالي للقاءات الرسمية.',
+                    en: 'Luxurious long-sleeve black shirt, designed for formal occasions.'
+                },
+                features: {
+                    ar: ['لون أسود كلاسيكي', 'مناسب لجميع المناسبات', 'جودة عالية', 'راحة ممتازة'],
+                    en: ['Classic black color', 'Suitable for all occasions', 'High quality', 'Excellent comfort']
                 }
             },
         ],
@@ -414,19 +432,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 code: 'PST-04',
                 name: {
                     ar: 'بنطلون كلاسيكي أسود',
-                     en: 'Classic Black Pants'
+                    en: 'Classic Black Pants'
                 },
                 price: 450,
-                images: [
-                    'images/pants.2.1.jpg',
-                    'images/pants.2.2.jpg',
-                    'images/pants.2.3.jpg',
-                ],
+                images: ['images/pants.2.1.jpg', 'images/pants.2.2.jpg', 'images/pants.2.3.jpg'],
                 category: 'pants',
                 sizes: ["32", "34", "36", "38", "40"],
                 description: {
                     ar: 'بنطلون أسود كلاسيكي يناسب جميع المناسبات مع قصة مثالية.',
                     en: 'Classic black pants suitable for all occasions with perfect cut.'
+                },
+                features: {
+                    ar: ['قماش ممتاز', 'قصة كلاسيكية', 'متانة عالية', 'تناسب مثالي'],
+                    en: ['Excellent fabric', 'Classic cut', 'High durability', 'Perfect fit']
                 }
             },
             {
@@ -434,18 +452,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 code: 'PT-002',
                 name: {
                     ar: 'بنطلون كلاسيكي بيجي',
-                    en: 'Classic peage Pants'
+                    en: 'Classic Beige Pants'
                 },
                 price: 480,
-                images: [
-                    'images/pants.1.1.jpg',
-                    'images/pants.1.2.jpg',
-                ],
+                images: ['images/pants.1.1.jpg', 'images/pants.1.2.jpg'],
                 category: 'pants',
                 sizes: ["30", "32", "34", "36"],
                 description: {
                     ar: 'بنطلون بيجي أنيق يتميز بالراحة والأناقة في نفس الوقت.',
-                    en: 'Elegant peage pants characterized by comfort and elegance at the same time.'
+                    en: 'Elegant beige pants characterized by comfort and elegance at the same time.'
+                },
+                features: {
+                    ar: ['لون بيجي محايد', 'راحة فائقة', 'تصميم عصري', 'جودة عالية'],
+                    en: ['Neutral beige color', 'Super comfort', 'Modern design', 'High quality']
                 }
             }
         ],
@@ -458,15 +477,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     en: 'Classic Black Shoes'
                 },
                 price: 600,
-                images: [
-                    'images/shose.1.2.jpg',
-                    'images/shose.1.3.jpg',
-                ],
+                images: ['images/shose.1.2.jpg', 'images/shose.1.3.jpg'],
                 category: 'shoes',
                 sizes: ["40", "41", "42", "43", "44"],
                 description: {
                     ar: 'حذاء أسود كلاسيكي يجمع بين الأناقة والراحة في تصميم مبتكر.',
                     en: 'Classic black shoes combining elegance and comfort in an innovative design.'
+                },
+                features: {
+                    ar: ['جلد طبيعي', 'نعل مريح', 'تصميم كلاسيكي', 'متانة عالية'],
+                    en: ['Genuine leather', 'Comfortable sole', 'Classic design', 'High durability']
                 }
             },
             {
@@ -477,42 +497,47 @@ document.addEventListener('DOMContentLoaded', function() {
                     en: 'Classic Brown Shoes'
                 },
                 price: 650,
-                images: [
-                    'images/shose.2.1.jpg',
-                    'images/shose.2.2.jpg',
-                ],
+                images: ['images/shose.2.1.jpg', 'images/shose.2.2.jpg'],
                 category: 'shoes',
                 sizes: ["39", "40", "41", "42", "43"],
                 description: {
                     ar: 'حذاء بني أنيق يناسب الملابس الكلاسيكية والعصرية.',
                     en: 'Elegant brown shoes suitable for both classic and contemporary outfits.'
+                },
+                features: {
+                    ar: ['لون بني كلاسيكي', 'راحة طوال اليوم', 'تصميم أنيق', 'جودة فاخرة'],
+                    en: ['Classic brown color', 'All-day comfort', 'Elegant design', 'Luxurious quality']
                 }
             }
-
         ]
     };
 
     // Initialize the site
     function init() {
-        loadProducts();
-        setupEventListeners();
-        updateCartCount();
-        loadStatistics();
-        setupStatistics();
-        initRatings();
+        console.log('Initializing Teto Classic...');
         
-        // Load language preference from localStorage if available
+        // Load data first
+        loadRatings();
+        loadCart();
+        
+        // Setup everything else
+        setupEventListeners();
+        loadProducts();
+        updateCartCount();
+        
+        // Load language preference
         const savedLanguage = localStorage.getItem('tetoLanguage');
         if (savedLanguage) {
             switchLanguage(savedLanguage);
         }
         
-        // تسجيل زيارة جديدة
-        recordVisit();
+        console.log('Teto Classic initialized successfully!');
     }
 
     // Load products into the grid
     function loadProducts() {
+        console.log('Loading products...');
+        
         for (const category in products) {
             const grid = document.getElementById(category + 'Grid');
             if (grid) {
@@ -536,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="product-offer">${currentLanguage === 'ar' ? 'عرض محدود' : 'Limited Offer'}</div>
             <div class="product-img">
                 <img src="${product.images[0]}" alt="${product.name[currentLanguage]}" loading="lazy" 
-                     onerror="this.src='images/default-product.jpg'">
+                     onerror="this.onerror=null; this.src='images/default-product.jpg';">
             </div>
             <div class="product-info">
                 <h3 class="product-title">${product.name[currentLanguage]}</h3>
@@ -565,7 +590,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const addToCartBtn = card.querySelector('.add-to-cart-btn');
         addToCartBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            currentProduct = product; // تعيين المنتج الحالي
+            currentProduct = product;
             addToCart(product);
             showNotification(currentLanguage === 'ar' ? 'تمت إضافة المنتج إلى السلة' : 'Product added to cart');
         });
@@ -573,165 +598,138 @@ document.addEventListener('DOMContentLoaded', function() {
         const buyNowBtn = card.querySelector('.buy-now-btn');
         buyNowBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            currentProduct = product; // تعيين المنتج الحالي
+            currentProduct = product;
+            selectedSize = '';
             openOrderForm(product);
         });
         
         card.addEventListener('click', function() {
-            showProductDetailPage(product);
+            // Scroll to top first
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Then show product details
+            setTimeout(() => {
+                showProductDetailPage(product);
+            }, 300);
         });
         
         return card;
     }
 
-    // نظام التقييمات
-    function initRatings() {
-        loadRatings();
-        setupRatingListeners();
-        
-        // إضافة تقييمات تجريبية إذا لم يكن هناك تقييمات
-        setTimeout(() => {
-            if (Object.keys(productRatings).length === 0) {
-                addSampleRatings();
-            }
-        }, 1000);
-    }
-
+    // نظام التقييمات المحسّن
     function loadRatings() {
+        console.log('Loading ratings...');
         const savedRatings = localStorage.getItem('tetoProductRatings');
         if (savedRatings) {
-            productRatings = JSON.parse(savedRatings);
+            try {
+                productRatings = JSON.parse(savedRatings);
+                console.log(`Loaded ${Object.keys(productRatings).length} product ratings`);
+            } catch (e) {
+                console.error('Error loading ratings:', e);
+                productRatings = {};
+            }
+        } else {
+            // Add sample ratings if none exist
+            addSampleRatings();
         }
     }
 
     function saveRatings() {
-        localStorage.setItem('tetoProductRatings', JSON.stringify(productRatings));
+        try {
+            localStorage.setItem('tetoProductRatings', JSON.stringify(productRatings));
+            console.log('Ratings saved successfully');
+        } catch (e) {
+            console.error('Error saving ratings:', e);
+        }
     }
 
-    function setupRatingListeners() {
-        // إعادة تهيئة النجوم عند كل مرة
-        document.addEventListener('click', function() {
-            const starsInput = document.querySelector('.stars-input');
-            if (starsInput) {
-                const stars = starsInput.querySelectorAll('i');
-                stars.forEach(star => {
-                    star.addEventListener('click', function() {
-                        const rating = parseInt(this.getAttribute('data-rating'));
-                        setStarRating(rating);
-                    });
+    function addSampleRatings() {
+        console.log('Adding sample ratings...');
+        
+        // Sample users
+        const users = ['محمد أحمد', 'علي محمود', 'خالد عمر', 'سالم يوسف', 'أحمد سعيد', 
+                      'مصطفى كمال', 'يوسف حسن', 'حسام الدين', 'طارق عثمان', 'سامي رضا'];
+        
+        // Add ratings for all products
+        Object.values(products).forEach(category => {
+            category.forEach(product => {
+                // Add 2-5 ratings per product
+                const numRatings = Math.floor(Math.random() * 4) + 2;
+                for (let i = 0; i < numRatings; i++) {
+                    const rating = {
+                        id: Date.now() + Math.random(),
+                        productId: product.id,
+                        rating: Math.floor(Math.random() * 2) + 4, // 4-5 stars
+                        date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+                        user: users[Math.floor(Math.random() * users.length)]
+                    };
                     
-                    star.addEventListener('mouseover', function() {
-                        const rating = parseInt(this.getAttribute('data-rating'));
-                        highlightStars(rating);
-                    });
-                });
-            }
-        });
-        
-        // زر إرسال التقييم
-        const submitBtn = document.getElementById('submitRating');
-        if (submitBtn) {
-            submitBtn.addEventListener('click', submitRating);
-        }
-        
-        // إعادة تهيئة النجوم عند فتح صفحة المنتج
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'childList') {
-                    const starsInput = document.querySelector('.stars-input');
-                    if (starsInput) {
-                        const stars = starsInput.querySelectorAll('i');
-                        stars.forEach(star => {
-                            star.addEventListener('click', function() {
-                                const rating = parseInt(this.getAttribute('data-rating'));
-                                setStarRating(rating);
-                            });
-                            
-                            star.addEventListener('mouseover', function() {
-                                const rating = parseInt(this.getAttribute('data-rating'));
-                                highlightStars(rating);
-                            });
-                        });
+                    if (!productRatings[product.id]) {
+                        productRatings[product.id] = [];
                     }
+                    productRatings[product.id].push(rating);
                 }
             });
         });
         
-        observer.observe(document.body, { childList: true, subtree: true });
+        saveRatings();
+        console.log('Sample ratings added');
     }
 
-    // إضافة تقييمات تجريبية للمنتجات
-    function addSampleRatings() {
-        const sampleRatings = [
-            { productId: 1, rating: 5, user: "محمد أحمد" },
-            { productId: 1, rating: 4, user: "علي محمود" },
-            { productId: 2, rating: 5, user: "خالد عمر" },
-            { productId: 3, rating: 4, user: "سالم يوسف" },
-            { productId: 4, rating: 5, user: "أحمد سعيد" },
-            { productId: 5, rating: 4, user: "مصطفى كمال" },
-            { productId: 6, rating: 5, user: "يوسف حسن" },
-            { productId: 7, rating: 3, user: "حسام الدين" },
-            { productId: 8, rating: 4, user: "طارق عثمان" },
-            { productId: 9, rating: 5, user: "سامي رضا" },
-            { productId: 10, rating: 4, user: "ناصر علي" },
-            { productId: 11, rating: 5, user: "فارس جمال" },
-            { productId: 12, rating: 4, user: "وسام محمد" },
-            { productId: 13, rating: 5, user: "بدر خالد" },
-            { productId: 14, rating: 4, user: "رامي سعد" },
-            { productId: 15, rating: 5, user: "عمر فاروق" },
-            { productId: 16, rating: 4, user: "مجد الدين" },
-            { productId: 17, rating: 5, user: "رياض مصطفى" },
-            { productId: 18, rating: 4, user: "جلال كريم" },
-            { productId: 19, rating: 5, user: "وليد حمدي" },
-            { productId: 20, rating: 4, user: "صبري ناصر" },
-            { productId: 21, rating: 5, user: "محمود عادل" },
-            { productId: 22, rating: 4, user: "فهد سليمان" }
-        ];
+    function setupRatingListeners() {
+        console.log('Setting up rating listeners...');
         
-        sampleRatings.forEach(ratingData => {
-            const newRating = {
-                id: Date.now() + Math.random(),
-                productId: ratingData.productId,
-                rating: ratingData.rating,
-                date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-                user: ratingData.user
-            };
+        // Rating stars
+        const starsInput = document.querySelector('.stars-input');
+        if (starsInput) {
+            const stars = starsInput.querySelectorAll('i');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    setStarRating(rating);
+                });
+                
+                star.addEventListener('mouseover', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    highlightStars(rating);
+                });
+            });
             
-            addProductRating(newRating);
-        });
+            starsInput.addEventListener('mouseleave', function() {
+                highlightStars(currentUserRating);
+            });
+        }
         
-        console.log("تمت إضافة تقييمات تجريبية");
+        // Submit rating button
+        if (submitRatingBtn) {
+            submitRatingBtn.addEventListener('click', submitRating);
+        }
     }
 
     function setStarRating(rating) {
-        const selectedRatingElement = document.getElementById('selectedRating');
-        if (selectedRatingElement) {
-            selectedRatingElement.textContent = rating;
-            highlightStars(rating);
-            
-            // تفعيل زر الإرسال
-            const submitBtn = document.getElementById('submitRating');
-            if (submitBtn) {
-                submitBtn.disabled = false;
-            }
+        currentUserRating = rating;
+        document.getElementById('selectedRating').textContent = rating;
+        highlightStars(rating);
+        
+        // Enable submit button
+        const submitBtn = document.getElementById('submitRating');
+        if (submitBtn) {
+            submitBtn.disabled = false;
         }
     }
 
     function highlightStars(rating) {
         const stars = document.querySelectorAll('.stars-input i');
-        if (stars.length > 0) {
-            stars.forEach((star, index) => {
-                if (index < rating) {
-                    star.classList.add('fas');
-                    star.classList.remove('far');
-                    star.classList.add('active');
-                } else {
-                    star.classList.add('far');
-                    star.classList.remove('fas');
-                    star.classList.remove('active');
-                }
-            });
-        }
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.remove('far');
+                star.classList.add('fas');
+                star.classList.add('active');
+            } else {
+                star.classList.remove('fas');
+                star.classList.add('far');
+                star.classList.remove('active');
+            }
+        });
     }
 
     function submitRating() {
@@ -740,36 +738,31 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        const rating = parseInt(document.getElementById('selectedRating').textContent);
-        if (rating === 0) {
-            alert(currentLanguage === 'ar' ? 'يرجى اختيار تقييم' : 'Please select a rating');
+        if (currentUserRating === 0) {
+            showNotification(currentLanguage === 'ar' ? 'يرجى اختيار تقييم' : 'Please select a rating');
             return;
         }
         
-        // طلب اسم المستخدم (اختياري)
-        const userName = prompt(currentLanguage === 'ar' 
-            ? 'أدخل اسمك (اختياري):' 
-            : 'Enter your name (optional):', 
-            'مستخدم');
+        // Generate random user name
+        const users = ['عميل Teto', 'مشتري راضي', 'عميل مميز', 'متابع Teto', 'عاشق الكلاسيك'];
+        const randomName = users[Math.floor(Math.random() * users.length)];
         
         const newRating = {
             id: Date.now(),
             productId: currentProduct.id,
-            rating: rating,
+            rating: currentUserRating,
             date: new Date().toISOString(),
-            user: userName || 'مستخدم'
+            user: randomName
         };
         
         addProductRating(newRating);
         updateProductRatingDisplay(currentProduct.id);
         
-        // إعادة تعيين واجهة التقييم
+        // Reset
+        currentUserRating = 0;
         document.getElementById('selectedRating').textContent = '0';
         highlightStars(0);
-        const submitBtn = document.getElementById('submitRating');
-        if (submitBtn) {
-            submitBtn.disabled = true;
-        }
+        submitRatingBtn.disabled = true;
         
         showNotification(currentLanguage === 'ar' 
             ? 'شكراً لك! تم إضافة تقييمك بنجاح' 
@@ -797,15 +790,20 @@ document.addEventListener('DOMContentLoaded', function() {
     function generateStarRating(averageRating) {
         const rating = parseFloat(averageRating);
         let stars = '';
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating - fullStars >= 0.5;
         
-        for (let i = 1; i <= 5; i++) {
-            if (i <= Math.floor(rating)) {
-                stars += '<i class="fas fa-star"></i>';
-            } else if (i - rating < 1 && i - rating > 0) {
-                stars += '<i class="fas fa-star-half-alt"></i>';
-            } else {
-                stars += '<i class="far fa-star"></i>';
-            }
+        for (let i = 0; i < fullStars; i++) {
+            stars += '<i class="fas fa-star"></i>';
+        }
+        
+        if (hasHalfStar) {
+            stars += '<i class="fas fa-star-half-alt"></i>';
+        }
+        
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        for (let i = 0; i < emptyStars; i++) {
+            stars += '<i class="far fa-star"></i>';
         }
         
         return stars;
@@ -816,39 +814,34 @@ document.addEventListener('DOMContentLoaded', function() {
         const averageRating = calculateAverageRating(ratings);
         const totalRatings = ratings.length;
         
-        // تحديث متوسط التقييم
-        const avgRatingElement = document.getElementById('averageRating');
-        const totalRatingsElement = document.getElementById('totalRatings');
+        // Update all rating displays
+        const elements = {
+            'quickAverageRating': averageRating,
+            'ratingCount': totalRatings,
+            'averageRating': averageRating,
+            'totalRatings': totalRatings
+        };
         
-        if (avgRatingElement) avgRatingElement.textContent = averageRating;
-        if (totalRatingsElement) totalRatingsElement.textContent = totalRatings;
-        
-        // تحديث النجوم
-        const averageStarsContainer = document.getElementById('averageRatingStars');
-        const quickRatingStarsContainer = document.getElementById('quickRatingStars');
-        
-        if (averageStarsContainer) {
-            averageStarsContainer.innerHTML = generateStarRating(averageRating);
+        for (const [id, value] of Object.entries(elements)) {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value;
         }
         
-        if (quickRatingStarsContainer) {
-            quickRatingStarsContainer.innerHTML = generateStarRating(averageRating);
-        }
+        // Update stars
+        const starContainers = ['quickRatingStars', 'averageRatingStars'];
+        starContainers.forEach(containerId => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = generateStarRating(averageRating);
+            }
+        });
         
-        // تحديث التقييم السريع في أعلى الصفحة
-        const quickAvgRatingElement = document.getElementById('quickAverageRating');
-        const ratingCountElement = document.getElementById('ratingCount');
-        
-        if (quickAvgRatingElement) quickAvgRatingElement.textContent = averageRating;
-        if (ratingCountElement) ratingCountElement.textContent = totalRatings;
-        
-        // تحديث قائمة التقييمات
+        // Update ratings list
         updateRatingsList(ratings);
     }
 
     function updateRatingsList(ratings) {
         const container = document.getElementById('ratingsContainer');
-        
         if (!container) return;
         
         if (ratings.length === 0) {
@@ -860,7 +853,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         container.innerHTML = '';
         
-        // ترتيب التقييمات من الأحدث إلى الأقدم
+        // Sort by date (newest first)
         const sortedRatings = [...ratings].sort((a, b) => new Date(b.date) - new Date(a.date));
         
         sortedRatings.forEach(rating => {
@@ -881,62 +874,67 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function formatDate(dateString) {
         const date = new Date(dateString);
-        return date.toLocaleDateString('ar-EG', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    }
-
-    // دالة لإنشاء عناصر المقاسات ديناميكياً
-    function createSizeOptions(sizes) {
-        let html = '';
-        sizes.forEach(size => {
-            if (size && size.trim() !== "") {
-                html += `
-                    <div class="size-option" data-size="${size}">
-                        <span>${size}</span>
-                    </div>
-                `;
-            }
-        });
-        return html;
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        
+        if (diffMins < 60) {
+            return currentLanguage === 'ar' ? `قبل ${diffMins} دقيقة` : `${diffMins} minutes ago`;
+        } else if (diffHours < 24) {
+            return currentLanguage === 'ar' ? `قبل ${diffHours} ساعة` : `${diffHours} hours ago`;
+        } else if (diffDays < 7) {
+            return currentLanguage === 'ar' ? `قبل ${diffDays} يوم` : `${diffDays} days ago`;
+        } else {
+            return date.toLocaleDateString(currentLanguage === 'ar' ? 'ar-EG' : 'en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
     }
 
     // Open order form directly
     function openOrderForm(product) {
-        // تحديث معلومات المنتج في نموذج الطلب
+        // Update product info
         orderProductImage.src = product.images[0];
         orderProductName.textContent = product.name[currentLanguage];
         orderProductPrice.textContent = product.price + ' ' + (currentLanguage === 'ar' ? 'جنيه' : 'EGP');
         orderProductCode.textContent = product.code;
         orderProductSize.textContent = selectedSize ? selectedSize : (currentLanguage === 'ar' ? 'لم يتم اختيار مقاس' : 'Size not selected');
         
-        // إعادة تعيين الحقول
+        // Reset form
         document.getElementById('customerName').value = '';
         document.getElementById('primaryPhone').value = '';
         document.getElementById('secondaryPhone').value = '';
         document.getElementById('customerAddress').value = '';
         additionalNotes.value = '';
         
-        // فتح نموذج الطلب
+        // Show modal
         orderModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
     }
 
-    // Show product detail page - إصلاح المشكلة الرئيسية هنا
+    // Show product detail page
     function showProductDetailPage(product) {
-        console.log("عرض تفاصيل المنتج:", product);
+        console.log('Showing product details for:', product.name[currentLanguage]);
         
         currentProduct = product;
-        selectedSize = ''; // إعادة تعيين المقاس المختار
+        selectedSize = '';
+        currentUserRating = 0;
         
         // Hide all sections
         sections.forEach(section => {
             section.classList.remove('active');
         });
         
+        // Scroll to top of page
+        window.scrollTo({ top: 80, behavior: 'smooth' });
+        
         // Show product detail section
-        document.getElementById('product-detail').classList.add('active');
+        const productDetailSection = document.getElementById('product-detail');
+        productDetailSection.classList.add('active');
         
         // Update product details
         document.getElementById('productDetailTitle').textContent = product.name[currentLanguage];
@@ -948,6 +946,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (product.images && product.images.length > 0) {
             productDetailImage.src = product.images[0];
             productDetailImage.alt = product.name[currentLanguage];
+        } else {
+            productDetailImage.src = 'images/default-product.jpg';
         }
         
         // Update thumbnails
@@ -958,11 +958,10 @@ document.addEventListener('DOMContentLoaded', function() {
             product.images.forEach((image, index) => {
                 const thumbnail = document.createElement('div');
                 thumbnail.className = 'thumbnail' + (index === 0 ? ' active' : '');
-                thumbnail.innerHTML = '<img src="' + image + '" alt="' + product.name[currentLanguage] + '">';
+                thumbnail.innerHTML = `<img src="${image}" alt="${product.name[currentLanguage]} ${index + 1}">`;
                 
                 thumbnail.addEventListener('click', function() {
-                    document.getElementById('productDetailImage').src = image;
-                    // Update active thumbnail
+                    productDetailImage.src = image;
                     document.querySelectorAll('.thumbnail').forEach(thumb => {
                         thumb.classList.remove('active');
                     });
@@ -977,18 +976,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update description
         const descriptionContent = document.querySelector('.description-content');
-        descriptionContent.innerHTML = `
-            <p>${product.description[currentLanguage] || product.description.ar || (currentLanguage === 'ar' ? 'لا يوجد وصف للمنتج' : 'No product description')}</p>
-            <h4>${currentLanguage === 'ar' ? 'مواصفات المنتج:' : 'Product Specifications:'}</h4>
+        const descriptionHTML = `
+            <p>${product.description[currentLanguage] || product.description.ar}</p>
+            <h4>${currentLanguage === 'ar' ? 'المميزات:' : 'Features:'}</h4>
             <ul>
-                <li>${currentLanguage === 'ar' ? 'تصميم كلاسيكي أنيق' : 'Elegant classic design'}</li>
-                <li>${currentLanguage === 'ar' ? 'قماش عالي الجودة يوفر راحة طوال اليوم' : 'High-quality fabric provides all-day comfort'}</li>
-                <li>${currentLanguage === 'ar' ? 'تفصيل احترافي يضمن المتانة والمظهر الأنيق' : 'Professional finish ensures durability and elegant appearance'}</li>
-                <li>${currentLanguage === 'ar' ? 'تناسب مثالي للارتداء اليومي' : 'Perfect fit for daily wear'}</li>
+                ${product.features[currentLanguage].map(feature => `<li>${feature}</li>`).join('')}
             </ul>
         `;
+        descriptionContent.innerHTML = descriptionHTML;
         
-        // تحديث عرض المقاسات الخاصة بالمنتج
+        // Update sizes
         const sizeOptionsContainer = document.querySelector('.size-options');
         if (sizeOptionsContainer) {
             sizeOptionsContainer.innerHTML = '';
@@ -1002,15 +999,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         sizeOption.dataset.size = size;
                         
                         sizeOption.addEventListener('click', function() {
-                            // إزالة التحديد من جميع المقاسات
                             document.querySelectorAll('.size-option').forEach(opt => {
                                 opt.classList.remove('active');
                             });
-                            // تحديد المقاس المختار
                             this.classList.add('active');
                             selectedSize = size;
                             
-                            // تحديث نص المساعدة بالمقاس المختار
+                            // Update help text
                             const sizeHelp = document.querySelector('.size-help span');
                             if (sizeHelp) {
                                 sizeHelp.textContent = currentLanguage === 'ar' 
@@ -1023,7 +1018,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
                 
-                // إذا لم تكن هناك مقاسات صالحة
                 if (sizeOptionsContainer.children.length === 0) {
                     sizeOptionsContainer.innerHTML = `<div class="no-sizes">${currentLanguage === 'ar' ? 'لا توجد مقاسات متاحة' : 'No sizes available'}</div>`;
                 }
@@ -1032,12 +1026,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // تحديث عرض التقييمات
+        // Update ratings
         updateProductRatingDisplay(product.id);
         
-        // إعادة تهيئة نظام التقييمات
+        // Setup rating listeners
         setTimeout(() => {
-            // إعادة تعيين النجوم
+            setupRatingListeners();
+            
+            // Reset rating input
             const selectedRatingElement = document.getElementById('selectedRating');
             if (selectedRatingElement) {
                 selectedRatingElement.textContent = '0';
@@ -1061,21 +1057,25 @@ document.addEventListener('DOMContentLoaded', function() {
         
         suggestionsGrid.innerHTML = '';
         
-        // جمع جميع المنتجات من جميع الفئات
-        const allProducts = [];
-        for (const category in products) {
-            products[category].forEach(p => {
-                if (p.id !== product.id) { // استبعاد المنتج الحالي
-                    allProducts.push(p);
+        // Get products from same category (excluding current product)
+        const sameCategoryProducts = products[product.category].filter(p => p.id !== product.id);
+        
+        // If not enough products in same category, add from other categories
+        let suggestions = [...sameCategoryProducts];
+        if (suggestions.length < 4) {
+            const otherProducts = [];
+            for (const category in products) {
+                if (category !== product.category) {
+                    otherProducts.push(...products[category]);
                 }
-            });
+            }
+            suggestions.push(...otherProducts.filter(p => p.id !== product.id));
         }
         
-        // اختيار 4 منتجات عشوائية
-        const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 4);
+        // Take first 4
+        suggestions = suggestions.slice(0, 4);
         
-        selected.forEach(suggestion => {
+        suggestions.forEach(suggestion => {
             const ratings = getProductRatings(suggestion.id);
             const averageRating = calculateAverageRating(ratings);
             
@@ -1084,7 +1084,7 @@ document.addEventListener('DOMContentLoaded', function() {
             suggestionCard.innerHTML = `
                 <div class="product-img">
                     <img src="${suggestion.images[0]}" alt="${suggestion.name[currentLanguage]}" loading="lazy"
-                         onerror="this.src='images/default-product.jpg'">
+                         onerror="this.onerror=null; this.src='images/default-product.jpg';">
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">${suggestion.name[currentLanguage]}</h3>
@@ -1109,14 +1109,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
             
-            // Add event listeners for suggestion cards
+            // Add event listeners
             const addToCartBtn = suggestionCard.querySelector('.add-to-cart-btn');
             addToCartBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                const tempProduct = currentProduct;
                 currentProduct = suggestion;
                 addToCart(suggestion);
-                currentProduct = tempProduct;
                 showNotification(currentLanguage === 'ar' ? 'تمت إضافة المنتج إلى السلة' : 'Product added to cart');
             });
             
@@ -1124,26 +1122,54 @@ document.addEventListener('DOMContentLoaded', function() {
             buyNowBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 currentProduct = suggestion;
+                selectedSize = '';
                 openOrderForm(suggestion);
             });
             
             suggestionCard.addEventListener('click', function() {
-                showProductDetailPage(suggestion);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => {
+                    showProductDetailPage(suggestion);
+                }, 300);
             });
             
             suggestionsGrid.appendChild(suggestionCard);
         });
     }
 
-    // Add product to cart
+    // Cart functions
+    function loadCart() {
+        const savedCart = localStorage.getItem('tetoCart');
+        if (savedCart) {
+            try {
+                cart = JSON.parse(savedCart);
+                console.log('Cart loaded:', cart.length, 'items');
+            } catch (e) {
+                console.error('Error loading cart:', e);
+                cart = [];
+            }
+        }
+    }
+
+    function saveCart() {
+        try {
+            localStorage.setItem('tetoCart', JSON.stringify(cart));
+        } catch (e) {
+            console.error('Error saving cart:', e);
+        }
+    }
+
     function addToCart(product) {
-        // التحقق من اختيار مقاس إذا كان المنتج له مقاسات
-        if (product.sizes && product.sizes.length > 0 && product.sizes.some(s => s.trim() !== "") && !selectedSize) {
+        // Check if size is required
+        if (product.sizes && product.sizes.some(s => s.trim() !== "") && !selectedSize) {
             showNotification(currentLanguage === 'ar' ? 'يرجى اختيار المقاس أولاً' : 'Please select a size first');
             return;
         }
         
-        const existingItem = cart.find(item => item.id === product.id && item.size === selectedSize);
+        const existingItem = cart.find(item => 
+            item.id === product.id && 
+            item.size === selectedSize
+        );
         
         if (existingItem) {
             existingItem.quantity += 1;
@@ -1155,317 +1181,114 @@ document.addEventListener('DOMContentLoaded', function() {
                 image: product.images[0],
                 quantity: 1,
                 size: selectedSize,
-                code: product.code
+                code: product.code,
+                category: product.category
             });
         }
         
+        saveCart();
         updateCartCount();
         showNotification(currentLanguage === 'ar' ? 'تمت إضافة المنتج إلى السلة' : 'Product added to cart');
     }
 
-    // Update cart count in header
     function updateCartCount() {
         const cartCount = document.querySelector('.cart-count');
         const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
         cartCount.textContent = totalItems;
     }
 
+    function updateCartDisplay() {
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        
+        cartItems.innerHTML = '';
+        
+        if (cart.length === 0) {
+            cartItems.innerHTML = '<div class="empty-state">' + 
+                (currentLanguage === 'ar' ? 'سلة التسوق فارغة' : 'Your shopping cart is empty') + 
+                '</div>';
+            cartTotal.textContent = '0';
+            return;
+        }
+        
+        cart.forEach(item => {
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item';
+            cartItem.innerHTML = `
+                <div class="cart-item-img">
+                    <img src="${item.image}" alt="${item.name[currentLanguage]}">
+                </div>
+                <div class="cart-item-info">
+                    <h4 class="cart-item-title">${item.name[currentLanguage]}</h4>
+                    <div class="cart-item-price">${item.price} ${currentLanguage === 'ar' ? 'جنيه' : 'EGP'} × ${item.quantity}</div>
+                    <div class="cart-item-code">🆔 ${item.code}</div>
+                    ${item.size ? `<div class="cart-item-size">${currentLanguage === 'ar' ? 'المقاس: ' : 'Size: '}${item.size}</div>` : ''}
+                </div>
+                <button class="cart-item-remove" data-id="${item.id}" data-size="${item.size || ''}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            
+            const removeBtn = cartItem.querySelector('.cart-item-remove');
+            removeBtn.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                const size = this.getAttribute('data-size');
+                removeFromCart(id, size);
+            });
+            
+            cartItems.appendChild(cartItem);
+        });
+        
+        cartTotal.textContent = getCartTotal();
+    }
+
+    function removeFromCart(productId, size) {
+        cart = cart.filter(item => !(item.id === productId && item.size === size));
+        saveCart();
+        updateCartCount();
+        updateCartDisplay();
+        showNotification(currentLanguage === 'ar' ? 'تم إزالة المنتج من السلة' : 'Product removed from cart');
+    }
+
+    function getCartTotal() {
+        return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    }
+
     // Show notification
     function showNotification(message) {
-        // Create notification element
+        // Remove existing notifications
+        document.querySelectorAll('.notification').forEach(n => n.remove());
+        
         const notification = document.createElement('div');
-        notification.style.cssText = `
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
-            padding: 15px 20px;
-            border-radius: 5px;
-            z-index: 1200;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        `;
+        notification.className = 'notification';
         notification.textContent = message;
         
         document.body.appendChild(notification);
         
-        // Remove notification after 3 seconds
         setTimeout(() => {
-            notification.style.opacity = '0';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    document.body.removeChild(notification);
-                }
-            }, 300);
+            if (notification.parentNode) {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }
         }, 3000);
-    }
-
-    // دوال الإحصائيات
-    function setupStatistics() {
-        // إظهار زر الإحصائيات
-        statsBtn.style.display = 'block';
-    }
-
-    function loadStatistics() {
-        const savedStats = localStorage.getItem('tetoStats');
-        if (savedStats) {
-            siteStats = JSON.parse(savedStats);
-        }
-        updateStatsDisplay();
-    }
-
-    function saveStatistics() {
-        localStorage.setItem('tetoStats', JSON.stringify(siteStats));
-    }
-
-    function recordVisit() {
-        const today = new Date().toDateString();
-        const currentMonth = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'numeric' });
-        
-        // زيادة الزوار الكلي
-        siteStats.totalVisitors++;
-        
-        // زيادة زوار الشهر
-        if (!siteStats.monthlyVisitors) {
-            siteStats.monthlyVisitors = 0;
-        }
-        siteStats.monthlyVisitors++;
-        
-        // تسجيل الزيارة اليومية
-        if (!siteStats.dailyVisits[today]) {
-            siteStats.dailyVisits[today] = 0;
-        }
-        siteStats.dailyVisits[today]++;
-        
-        saveStatistics();
-        updateStatsDisplay();
-    }
-
-    function recordOrder(orderData) {
-        siteStats.totalOrders++;
-        siteStats.totalSales += orderData.total;
-        
-        // حفظ بيانات الطلب
-        const order = {
-            id: generateOrderId(),
-            date: new Date().toISOString(),
-            customer: orderData.customer,
-            products: orderData.products,
-            total: orderData.total
-        };
-        
-        siteStats.orders.unshift(order);
-        
-        // تحديث أفضل المنتجات مبيعاً
-        orderData.products.forEach(product => {
-            if (!siteStats.topProducts[product.id]) {
-                siteStats.topProducts[product.id] = {
-                    name: product.name,
-                    sales: 0
-                };
-            }
-            siteStats.topProducts[product.id].sales += product.quantity;
-        });
-        
-        // حفظ فقط آخر 50 طلب
-        if (siteStats.orders.length > 50) {
-            siteStats.orders = siteStats.orders.slice(0, 50);
-        }
-        
-        saveStatistics();
-        updateStatsDisplay();
-    }
-
-    function generateOrderId() {
-        return 'ORD-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
-    }
-
-    function updateStatsDisplay() {
-        // تحديث البطاقات الرئيسية
-        document.getElementById('totalVisitors').textContent = siteStats.totalVisitors.toLocaleString();
-        document.getElementById('totalOrders').textContent = siteStats.totalOrders.toLocaleString();
-        document.getElementById('totalSales').textContent = siteStats.totalSales.toLocaleString();
-        document.getElementById('monthlyVisitors').textContent = siteStats.monthlyVisitors.toLocaleString();
-        
-        // تحديث الرسم البياني
-        updateVisitsChart();
-        
-        // تحديث أفضل المنتجات
-        updateTopProducts();
-        
-        // تحديث آخر الطلبات
-        updateRecentOrders();
-    }
-
-    function updateVisitsChart() {
-        const ctx = document.getElementById('visitsChart').getContext('2d');
-        const last7Days = getLast7Days();
-        const visitsData = last7Days.map(day => siteStats.dailyVisits[day] || 0);
-        
-        // رسم chart بسيط
-        drawSimpleChart(ctx, last7Days, visitsData);
-    }
-
-    function getLast7Days() {
-        const days = [];
-        for (let i = 6; i >= 0; i--) {
-            const date = new Date();
-            date.setDate(date.getDate() - i);
-            days.push(date.toDateString());
-        }
-        return days;
-    }
-
-    function drawSimpleChart(ctx, labels, data) {
-        // تنظيف canvas
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        
-        if (data.every(val => val === 0)) return;
-        
-        const padding = 40;
-        const chartWidth = ctx.canvas.width - padding * 2;
-        const chartHeight = ctx.canvas.height - padding * 2;
-        const maxValue = Math.max(...data);
-        
-        // رسم المحاور
-        ctx.strokeStyle = '#ddd';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(padding, padding);
-        ctx.lineTo(padding, padding + chartHeight);
-        ctx.lineTo(padding + chartWidth, padding + chartHeight);
-        ctx.stroke();
-        
-        // رسم الخط
-        ctx.strokeStyle = '#D4AF37';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        
-        data.forEach((value, index) => {
-            const x = padding + (index * chartWidth) / (data.length - 1);
-            const y = padding + chartHeight - (value / maxValue) * chartHeight;
-            
-            if (index === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        });
-        
-        ctx.stroke();
-        
-        // رسم النقاط
-        ctx.fillStyle = '#D4AF37';
-        data.forEach((value, index) => {
-            const x = padding + (index * chartWidth) / (data.length - 1);
-            const y = padding + chartHeight - (value / maxValue) * chartHeight;
-            
-            ctx.beginPath();
-            ctx.arc(x, y, 4, 0, Math.PI * 2);
-            ctx.fill();
-        });
-        
-        // كتابة التسميات
-        ctx.fillStyle = '#333333';
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        
-        labels.forEach((label, index) => {
-            const x = padding + (index * chartWidth) / (data.length - 1);
-            const y = padding + chartHeight + 20;
-            const dayName = new Date(label).toLocaleDateString('ar-EG', { weekday: 'short' });
-            ctx.fillText(dayName, x, y);
-        });
-    }
-
-    function updateTopProducts() {
-        const topProductsContainer = document.getElementById('topProducts');
-        const sortedProducts = Object.entries(siteStats.topProducts)
-            .sort((a, b) => b[1].sales - a[1].sales)
-            .slice(0, 5);
-        
-        topProductsContainer.innerHTML = '';
-        
-        sortedProducts.forEach(([id, product], index) => {
-            const rankElement = document.createElement('div');
-            rankElement.className = 'product-rank';
-            rankElement.innerHTML = `
-                <div class="product-name">${index + 1}. ${product.name[currentLanguage] || product.name.ar}</div>
-                <div class="product-sales">${product.sales} ${currentLanguage === 'ar' ? 'مبيعات' : 'sales'}</div>
-            `;
-            topProductsContainer.appendChild(rankElement);
-        });
-    }
-
-    function updateRecentOrders() {
-        const ordersContainer = document.getElementById('recentOrdersList');
-        const recentOrders = siteStats.orders.slice(0, 5);
-        
-        ordersContainer.innerHTML = '';
-        
-        if (recentOrders.length === 0) {
-            ordersContainer.innerHTML = '<p style="text-align: center; color: #666;">' + 
-                (currentLanguage === 'ar' ? 'لا توجد طلبات حديثة' : 'No recent orders') + '</p>';
-            return;
-        }
-        
-        recentOrders.forEach(order => {
-            const orderElement = document.createElement('div');
-            orderElement.className = 'order-item';
-            orderElement.innerHTML = `
-                <div class="order-header">
-                    <span class="order-id">${order.id}</span>
-                    <span class="order-date">${new Date(order.date).toLocaleDateString('ar-EG')}</span>
-                </div>
-                <div class="order-details">
-                    ${order.customer.name} - ${order.products.length} ${currentLanguage === 'ar' ? 'منتج' : 'products'} - ${order.total} ${currentLanguage === 'ar' ? 'جنيه' : 'EGP'}
-                </div>
-            `;
-            ordersContainer.appendChild(orderElement);
-        });
-    }
-
-    function exportStatistics() {
-        const dataStr = JSON.stringify(siteStats, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(dataBlob);
-        link.download = 'teto-stats-' + new Date().toISOString().split('T')[0] + '.json';
-        link.click();
-    }
-
-    function resetStatistics() {
-        siteStats = {
-            totalVisitors: 0,
-            totalOrders: 0,
-            totalSales: 0,
-            monthlyVisitors: 0,
-            dailyVisits: {},
-            orders: [],
-            topProducts: {}
-        };
-        
-        saveStatistics();
-        updateStatsDisplay();
-        
-        showNotification(currentLanguage === 'ar' ? 'تم إعادة تعيين الإحصائيات' : 'Statistics have been reset');
     }
 
     // Switch language
     function switchLanguage(lang) {
         currentLanguage = lang;
         
-        // Update HTML direction
+        // Update HTML
         document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
         document.documentElement.lang = lang;
         
-        // Update all text elements
+        // Update UI
         updateAllTexts();
         
-        // Update language options UI
+        // Update language options
         languageOptionItems.forEach(option => {
             if (option.getAttribute('data-lang') === lang) {
                 option.classList.add('active');
@@ -1481,20 +1304,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Reload products to update names
+        // Reload products
         loadProducts();
         
-        // Update product details if open
+        // Update current product details
         if (currentProduct && document.getElementById('product-detail').classList.contains('active')) {
             showProductDetailPage(currentProduct);
         }
         
-        // Update cart display if open
+        // Update cart
         if (cartModal.classList.contains('active')) {
             updateCartDisplay();
         }
         
-        // Save language preference
+        // Save preference
         localStorage.setItem('tetoLanguage', lang);
     }
 
@@ -1507,199 +1330,244 @@ document.addEventListener('DOMContentLoaded', function() {
             link.textContent = currentLanguage === 'ar' ? texts[index] : enTexts[index];
         });
         
-        // Hero section
-        const heroTitle = document.querySelector('.hero h1');
-        heroTitle.textContent = currentLanguage === 'ar' 
-            ? 'Teto Classic | حرفة سودانية بفخامة عالمية' 
-            : 'Teto Classic | Sudanese Craftsmanship with Global Elegance';
-        
-        const heroDesc = document.querySelector('.hero p');
-        heroDesc.textContent = currentLanguage === 'ar' 
-            ? 'نقدم لكم أفضل تشكيلة من الملابس الرجالية الكلاسيكية التي تجمع بين الأناقة والجودة. قمصان، بناطلين، وأحذية مصممة بعناية لتليق برجولتك وأناقتك.' 
-            : 'We offer you the finest selection of classic men\'s clothing that combines elegance and quality. Shirts, pants, and shoes carefully designed to suit your masculinity and style.';
-        
-        const tagline = document.querySelector('.tagline');
-        tagline.textContent = currentLanguage === 'ar' 
-            ? '"التميز ليس للجميع ، بل هو لأولئك الذين يفعلون كل ما يلزم 🥇"' 
-            : '"Excellence is not for everyone, but for those who do whatever it takes 🥇"';
-        
-        const location = document.querySelector('.contact-info p:nth-child(2)');
-        location.textContent = currentLanguage === 'ar' 
-            ? '📍: SUG 🇸🇩 - EGP 🇪🇬' 
-            : '📍: Sudan 🇸🇩 - Egypt 🇪🇬';
-        
-        const hashtag = document.querySelector('.contact-info p:nth-child(3)');
-        hashtag.textContent = currentLanguage === 'ar' 
-            ? '"#تميزك_سر_نجاحك 🖤🏆"' 
-            : '"#YourExcellenceIsYourSuccess 🖤🏆"';
-        
-        // Section titles
-        document.querySelectorAll('.section-title').forEach((title, index) => {
-            const texts = ['آراء العملاء', 'القمصان', 'البناطلين', 'الأحذية'];
-            const enTexts = ['Customer Reviews', 'Shirts', 'Pants', 'Shoes'];
-            if (texts[index]) {
-                title.textContent = currentLanguage === 'ar' ? texts[index] : enTexts[index];
+        // Buttons and labels
+        const translations = {
+            'ar': {
+                'addToCart': 'إضافة إلى السلة',
+                'buyNow': 'شراء الآن',
+                'backToProducts': 'العودة إلى المنتجات',
+                'chooseSize': 'اختر المقاس:',
+                'sizeHelp': 'يرجى اختيار المقاس المناسب',
+                'limitedStock': 'قطع محدودة متبقية!',
+                'productFeatures': 'تفاصيل المنتج',
+                'rateProduct': 'تقييم المنتج',
+                'addYourRating': 'أضف تقييمك',
+                'yourRating': 'تقييمك:',
+                'submitRating': 'إرسال التقييم',
+                'customerReviews': 'آراء العملاء',
+                'suggestedProducts': 'منتجات قد تعجبك',
+                'orderSummary': 'ملخص الطلب',
+                'customerInfo': 'معلومات العميل',
+                'fullName': 'الاسم بالكامل *',
+                'primaryPhone': 'رقم الهاتف الأساسي *',
+                'secondaryPhone': 'رقم الهاتف الاحتياطي',
+                'address': 'العنوان التفصيلي *',
+                'additionalNotes': 'ملاحظات إضافية',
+                'submitOrder': 'إرسال الطلب عبر واتساب',
+                'shoppingCart': 'سلة التسوق',
+                'continueShopping': 'مواصلة التسوق',
+                'proceedCheckout': 'إتمام الشراء',
+                'freeShipping': 'شحن مجاني',
+                'limitedOffer': 'عرض محدود! ينتهي خلال 3 أيام',
+                'qualityGuarantee': 'ضمان الجودة',
+                'previewMeasure': 'معاينة وقياس قبل الاستلام',
+                'fastDelivery': 'توصيل سريع'
+            },
+            'en': {
+                'addToCart': 'Add to Cart',
+                'buyNow': 'Buy Now',
+                'backToProducts': 'Back to Products',
+                'chooseSize': 'Choose Size:',
+                'sizeHelp': 'Please select the appropriate size',
+                'limitedStock': 'Limited stock remaining!',
+                'productFeatures': 'Product Details',
+                'rateProduct': 'Product Rating',
+                'addYourRating': 'Add Your Rating',
+                'yourRating': 'Your Rating:',
+                'submitRating': 'Submit Rating',
+                'customerReviews': 'Customer Reviews',
+                'suggestedProducts': 'Products You May Like',
+                'orderSummary': 'Order Summary',
+                'customerInfo': 'Customer Information',
+                'fullName': 'Full Name *',
+                'primaryPhone': 'Primary Phone *',
+                'secondaryPhone': 'Secondary Phone',
+                'address': 'Detailed Address *',
+                'additionalNotes': 'Additional Notes',
+                'submitOrder': 'Submit Order via WhatsApp',
+                'shoppingCart': 'Shopping Cart',
+                'continueShopping': 'Continue Shopping',
+                'proceedCheckout': 'Proceed to Checkout',
+                'freeShipping': 'Free Shipping',
+                'limitedOffer': 'Limited Offer! Ends in 3 days',
+                'qualityGuarantee': 'Quality Guarantee',
+                'previewMeasure': 'Preview & Measure Before Receipt',
+                'fastDelivery': 'Fast Delivery'
             }
-        });
+        };
         
-        // Update back to products link
-        backToProducts.innerHTML = currentLanguage === 'ar' 
-            ? '<i class="fas fa-arrow-right"></i> العودة إلى المنتجات' 
-            : '<i class="fas fa-arrow-left"></i> Back to Products';
+        const langData = translations[currentLanguage];
         
         // Update buttons
         document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-            btn.innerHTML = currentLanguage === 'ar' 
-                ? '<i class="fas fa-cart-plus"></i> إضافة إلى السلة' 
-                : '<i class="fas fa-cart-plus"></i> Add to Cart';
+            if (!btn.closest('.product-card')) {
+                const icon = btn.querySelector('i');
+                btn.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.addToCart}`;
+            }
         });
         
         document.querySelectorAll('.buy-now-btn').forEach(btn => {
-            btn.innerHTML = currentLanguage === 'ar' 
-                ? '<i class="fas fa-bolt"></i> شراء الآن' 
-                : '<i class="fas fa-bolt"></i> Buy Now';
+            if (!btn.closest('.product-card')) {
+                const icon = btn.querySelector('i');
+                btn.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.buyNow}`;
+            }
         });
         
-        // Update product suggestions title
-        const suggestionsTitle = document.querySelector('.product-suggestions h3');
-        if (suggestionsTitle) {
-            suggestionsTitle.textContent = currentLanguage === 'ar' ? 'منتجات قد تعجبك' : 'You May Also Like';
+        // Update back to products
+        const backBtn = document.querySelector('.back-to-products');
+        if (backBtn) {
+            const icon = backBtn.querySelector('i');
+            backBtn.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.backToProducts}`;
         }
         
-        // Cart modal
-        const cartTitle = document.querySelector('.cart-content .section-title');
-        if (cartTitle) {
-            cartTitle.textContent = currentLanguage === 'ar' ? 'سلة التسوق' : 'Shopping Cart';
+        // Update size selection
+        const sizeHeading = document.querySelector('.size-selection h3');
+        if (sizeHeading) {
+            sizeHeading.textContent = langData.chooseSize;
         }
         
-        const cartTotal = document.querySelector('.cart-total');
-        if (cartTotal) {
-            cartTotal.innerHTML = currentLanguage === 'ar' 
-                ? 'المجموع: <span id="cartTotal">0</span> جنيه' 
-                : 'Total: <span id="cartTotal">0</span> EGP';
+        const sizeHelp = document.getElementById('sizeHelpText');
+        if (sizeHelp) {
+            sizeHelp.textContent = langData.sizeHelp;
         }
         
-        const continueShoppingBtn = document.getElementById('continueShopping');
-        if (continueShoppingBtn) {
-            continueShoppingBtn.textContent = currentLanguage === 'ar' ? 'مواصلة التسوق' : 'Continue Shopping';
+        // Update stock info
+        const stockInfo = document.querySelector('.stock-info span');
+        if (stockInfo) {
+            stockInfo.textContent = langData.limitedStock;
         }
         
-        const checkoutBtn = document.getElementById('proceedCheckout');
-        if (checkoutBtn) {
-            checkoutBtn.textContent = currentLanguage === 'ar' ? 'إتمام الشراء' : 'Proceed to Checkout';
+        // Update product description
+        const productDesc = document.querySelector('.product-description h3');
+        if (productDesc) {
+            productDesc.textContent = langData.productFeatures;
         }
         
-        // Order form
-        const formTitle = document.querySelector('#checkoutForm h3');
-        if (formTitle) {
-            formTitle.textContent = currentLanguage === 'ar' ? 'معلومات العميل' : 'Customer Information';
+        // Update rating section
+        const ratingHeading = document.querySelector('.product-rating-section h3');
+        if (ratingHeading) {
+            ratingHeading.textContent = langData.rateProduct;
         }
         
-        document.querySelector('label[for="customerName"]').textContent = currentLanguage === 'ar' ? 'الاسم بالكامل *' : 'Full Name *';
-        document.querySelector('label[for="primaryPhone"]').textContent = currentLanguage === 'ar' ? 'رقم الهاتف الأساسي *' : 'Primary Phone Number *';
-        document.querySelector('label[for="secondaryPhone"]').textContent = currentLanguage === 'ar' ? 'رقم الهاتف الاحتياطي' : 'Secondary Phone Number';
-        document.querySelector('label[for="customerAddress"]').textContent = currentLanguage === 'ar' ? 'العنوان التفصيلي *' : 'Address *';
-        document.querySelector('label[for="additionalNotes"]').textContent = currentLanguage === 'ar' ? 'ملاحظات إضافية' : 'Additional Notes';
-        
-        const submitBtn = document.getElementById('submitOrder');
-        if (submitBtn) {
-            submitBtn.innerHTML = currentLanguage === 'ar' 
-                ? '<i class="fab fa-whatsapp"></i> إرسال الطلب عبر واتساب' 
-                : '<i class="fab fa-whatsapp"></i> Send Order via WhatsApp';
-        }
-        
-        // Footer
-        document.querySelectorAll('.footer-links a').forEach((link, index) => {
-            const texts = ['سياسة الخصوصية', 'الاسئلة الشائعة'];
-            const enTexts = ['Privacy Policy', 'FAQ'];
-            link.textContent = currentLanguage === 'ar' ? texts[index] : enTexts[index];
-        });
-        
-        const copyright = document.querySelector('.copyright');
-        copyright.textContent = currentLanguage === 'ar' 
-            ? '2025 Teto Classic. جميع الحقوق محفوظة.' 
-            : '2025 Teto Classic. All rights reserved.';
-            
-        // إحصائيات
-        if (document.querySelector('.stats-container h2')) {
-            document.querySelector('.stats-container h2').textContent = 
-                currentLanguage === 'ar' ? 'إحصائيات الموقع' : 'Website Statistics';
-        }
-        
-        // تحديث نصوص البطاقات
-        const statTexts = {
-            ar: ['إجمالي الزوار', 'إجمالي الطلبات', 'إجمالي المبيعات (جنيه)', 'زوار هذا الشهر'],
-            en: ['Total Visitors', 'Total Orders', 'Total Sales (EGP)', 'Monthly Visitors']
-        };
-        
-        document.querySelectorAll('.stat-info p').forEach((p, index) => {
-            p.textContent = statTexts[currentLanguage][index];
-        });
-        
-        // تحديث عناوين الأقسام
-        const sectionTitles = {
-            ar: ['الزيارات خلال آخر 7 أيام', 'المنتجات الأكثر مبيعاً', 'آخر الطلبات'],
-            en: ['Visits in Last 7 Days', 'Top Selling Products', 'Recent Orders']
-        };
-        
-        document.querySelectorAll('.chart-container h3, .recent-orders h3').forEach((h3, index) => {
-            h3.textContent = sectionTitles[currentLanguage][index];
-        });
-        
-        // تحديث أزرار الإجراءات
-        if (exportStats) {
-            exportStats.innerHTML = currentLanguage === 'ar' ? 
-                '<i class="fas fa-download"></i> تصدير البيانات' : 
-                '<i class="fas fa-download"></i> Export Data';
-        }
-        
-        if (resetStats) {
-            resetStats.innerHTML = currentLanguage === 'ar' ? 
-                '<i class="fas fa-redo"></i> إعادة التعيين' : 
-                '<i class="fas fa-redo"></i> Reset Stats';
-        }
-        
-        // تحديث نصوص نظام التقييم
-        const ratingSectionTitle = document.querySelector('.product-rating-section h3');
-        if (ratingSectionTitle) {
-            ratingSectionTitle.textContent = currentLanguage === 'ar' ? 'تقييم المنتج' : 'Product Rating';
-        }
-        
-        const addRatingTitle = document.querySelector('.add-rating h4');
-        if (addRatingTitle) {
-            addRatingTitle.textContent = currentLanguage === 'ar' ? 'أضف تقييمك' : 'Add Your Rating';
+        const addRatingHeading = document.querySelector('.add-rating h4');
+        if (addRatingHeading) {
+            addRatingHeading.textContent = langData.addYourRating;
         }
         
         const ratingValue = document.querySelector('.rating-value');
         if (ratingValue) {
-            ratingValue.innerHTML = currentLanguage === 'ar' ? 
-                'تقييمك: <span id="selectedRating">0</span>/5' : 
-                'Your Rating: <span id="selectedRating">0</span>/5';
+            const span = ratingValue.querySelector('span');
+            if (span) {
+                ratingValue.innerHTML = `${langData.yourRating} <span id="selectedRating">0</span>/5`;
+            }
         }
         
-        const submitRatingBtn = document.getElementById('submitRating');
-        if (submitRatingBtn) {
-            submitRatingBtn.innerHTML = currentLanguage === 'ar' ? 
-                '<i class="fas fa-paper-plane"></i> إرسال التقييم' : 
-                '<i class="fas fa-paper-plane"></i> Submit Rating';
+        const submitRating = document.getElementById('submitRating');
+        if (submitRating) {
+            const icon = submitRating.querySelector('i');
+            submitRating.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.submitRating}`;
         }
         
-        const ratingsListTitle = document.querySelector('.ratings-list h4');
-        if (ratingsListTitle) {
-            ratingsListTitle.textContent = currentLanguage === 'ar' ? 'آراء العملاء' : 'Customer Reviews';
+        const reviewsHeading = document.querySelector('.ratings-list h4');
+        if (reviewsHeading) {
+            reviewsHeading.textContent = langData.customerReviews;
         }
         
-        // تحديث نص عدم وجود تقييمات
-        const noRatings = document.querySelector('.no-ratings');
-        if (noRatings) {
-            noRatings.textContent = currentLanguage === 'ar' ? 
-                'لا توجد تقييمات حتى الآن. كن أول من يقيم هذا المنتج!' : 
-                'No ratings yet. Be the first to rate this product!';
+        // Update suggestions
+        const suggestionsHeading = document.querySelector('.product-suggestions h3');
+        if (suggestionsHeading) {
+            suggestionsHeading.textContent = langData.suggestedProducts;
+        }
+        
+        // Update order modal
+        const orderSummary = document.querySelector('.order-summary h3');
+        if (orderSummary) {
+            orderSummary.textContent = langData.orderSummary;
+        }
+        
+        const customerInfo = document.querySelector('.checkout-form h3');
+        if (customerInfo) {
+            customerInfo.textContent = langData.customerInfo;
+        }
+        
+        const nameLabel = document.querySelector('label[for="customerName"]');
+        if (nameLabel) {
+            nameLabel.textContent = langData.fullName;
+        }
+        
+        const phoneLabel = document.querySelector('label[for="primaryPhone"]');
+        if (phoneLabel) {
+            phoneLabel.textContent = langData.primaryPhone;
+        }
+        
+        const secPhoneLabel = document.querySelector('label[for="secondaryPhone"]');
+        if (secPhoneLabel) {
+            secPhoneLabel.textContent = langData.secondaryPhone;
+        }
+        
+        const addressLabel = document.querySelector('label[for="customerAddress"]');
+        if (addressLabel) {
+            addressLabel.textContent = langData.address;
+        }
+        
+        const notesLabel = document.querySelector('label[for="additionalNotes"]');
+        if (notesLabel) {
+            notesLabel.textContent = langData.additionalNotes;
+        }
+        
+        const submitOrderBtn = document.getElementById('submitOrder');
+        if (submitOrderBtn) {
+            const icon = submitOrderBtn.querySelector('i');
+            submitOrderBtn.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.submitOrder}`;
+        }
+        
+        // Update cart modal
+        const cartTitle = document.querySelector('.cart-content .section-title');
+        if (cartTitle) {
+            cartTitle.textContent = langData.shoppingCart;
+        }
+        
+        const continueBtn = document.getElementById('continueShopping');
+        if (continueBtn) {
+            continueBtn.textContent = langData.continueShopping;
+        }
+        
+        const checkoutBtn = document.getElementById('proceedCheckout');
+        if (checkoutBtn) {
+            checkoutBtn.textContent = langData.proceedCheckout;
+        }
+        
+        // Update cart total text
+        const cartTotal = document.querySelector('.cart-total');
+        if (cartTotal) {
+            cartTotal.innerHTML = `${currentLanguage === 'ar' ? 'المجموع:' : 'Total:'} <span id="cartTotal">0</span> ${currentLanguage === 'ar' ? 'جنيه' : 'EGP'}`;
+        }
+        
+        // Update delivery info
+        const deliveryInfo = document.querySelector('.delivery-info span');
+        if (deliveryInfo) {
+            deliveryInfo.textContent = langData.freeShipping;
+        }
+        
+        // Update limited offer
+        const limitedOffer = document.querySelector('.limited-offer span');
+        if (limitedOffer) {
+            limitedOffer.textContent = langData.limitedOffer;
+        }
+        
+        // Update features
+        const features = document.querySelectorAll('.feature span');
+        if (features.length >= 3) {
+            features[0].textContent = langData.qualityGuarantee;
+            features[1].textContent = langData.previewMeasure;
+            features[2].textContent = langData.fastDelivery;
         }
     }
 
     // Setup event listeners
     function setupEventListeners() {
+        console.log('Setting up event listeners...');
+        
         // Menu button
         menuBtn.addEventListener('click', function() {
             navMenu.classList.toggle('active');
@@ -1718,28 +1586,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 const category = this.getAttribute('data-category');
                 
-                // Hide all sections
                 sections.forEach(section => {
                     section.classList.remove('active');
                 });
                 
-                // Show selected section
                 document.getElementById(category).classList.add('active');
-                
-                // Close menu on mobile
                 navMenu.classList.remove('active');
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
 
         // Back to products
         backToProducts.addEventListener('click', function(e) {
             e.preventDefault();
-            // Hide all sections
             sections.forEach(section => {
                 section.classList.remove('active');
             });
-            // Show home section
             document.getElementById('home').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         // Add to cart in detail page
@@ -1759,87 +1625,92 @@ document.addEventListener('DOMContentLoaded', function() {
         // Cart button
         cartBtn.addEventListener('click', function() {
             cartModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
             updateCartDisplay();
         });
 
         // Close cart
         closeCart.addEventListener('click', function() {
             cartModal.classList.remove('active');
+            document.body.style.overflow = '';
         });
 
         // Continue shopping
         continueShopping.addEventListener('click', function() {
             cartModal.classList.remove('active');
+            document.body.style.overflow = '';
         });
 
         // Proceed to checkout
         proceedCheckout.addEventListener('click', function() {
             if (cart.length === 0) {
-                alert(currentLanguage === 'ar' ? 'السلة فارغة' : 'Cart is empty');
+                showNotification(currentLanguage === 'ar' ? 'السلة فارغة' : 'Cart is empty');
                 return;
             }
-            // يمكنك إضافة منطق للشراء من السلة هنا
-            alert(currentLanguage === 'ar' ? 'سيتم تطوير هذه الخاصية قريباً' : 'This feature will be developed soon');
+            // يمكن تطوير هذه الخاصية لاحقاً
+            showNotification(currentLanguage === 'ar' ? 'سيتم تطوير هذه الخاصية قريباً' : 'This feature will be developed soon');
         });
 
         // Close order modal
         closeOrder.addEventListener('click', function() {
             orderModal.classList.remove('active');
+            document.body.style.overflow = '';
         });
 
-        // Submit order from order modal
+        // Submit order
         submitOrder.addEventListener('click', function() {
-            const name = document.getElementById('customerName').value;
-            const primaryPhone = document.getElementById('primaryPhone').value;
-            const address = document.getElementById('customerAddress').value;
+            const name = document.getElementById('customerName').value.trim();
+            const primaryPhone = document.getElementById('primaryPhone').value.trim();
+            const address = document.getElementById('customerAddress').value.trim();
             
             if (!name || !primaryPhone || !address) {
-                alert(currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة' : 'Please fill all required fields');
+                showNotification(currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة' : 'Please fill all required fields');
                 return;
             }
             
-            // Create detailed order message for WhatsApp
-            let message = '🛒 *طلب جديد - Teto Classic* %0A%0A';
+            if (!currentProduct) {
+                showNotification(currentLanguage === 'ar' ? 'لم يتم تحديد منتج' : 'No product selected');
+                return;
+            }
             
-            message += '*📋 معلومات العميل:*%0A';
-            message += '👤 الاسم: ' + name + '%0A';
-            message += '📞 الهاتف: ' + primaryPhone + '%0A';
+            // Create WhatsApp message
+            let message = `*🛒 طلب جديد - Teto Classic*%0A%0A`;
+            message += `*📋 معلومات العميل:*%0A`;
+            message += `👤 الاسم: ${name}%0A`;
+            message += `📞 الهاتف: ${primaryPhone}%0A`;
             
-            const secondaryPhone = document.getElementById('secondaryPhone').value;
+            const secondaryPhone = document.getElementById('secondaryPhone').value.trim();
             if (secondaryPhone) {
-                message += '📱 الهاتف الاحتياطي: ' + secondaryPhone + '%0A';
+                message += `📱 الهاتف الاحتياطي: ${secondaryPhone}%0A`;
             }
             
-            message += '📍 العنوان: ' + address + '%0A';
+            message += `📍 العنوان: ${address}%0A`;
             
-            const notes = additionalNotes.value;
+            const notes = additionalNotes.value.trim();
             if (notes) {
-                message += '📝 الملاحظات: ' + notes + '%0A';
+                message += `📝 الملاحظات: ${notes}%0A`;
             }
             
-            message += '%0A';
-            
-            message += '*🛍️ المنتج المطلوب:*%0A';
-            message += '📦 المنتج: ' + currentProduct.name[currentLanguage] + '%0A';
-            message += '🆔 الرمز: ' + currentProduct.code + '%0A';
-            message += '💰 السعر: ' + currentProduct.price + ' جنيه%0A';
+            message += `%0A*🛍️ المنتج المطلوب:*%0A`;
+            message += `📦 المنتج: ${currentProduct.name[currentLanguage]}%0A`;
+            message += `🆔 الرمز: ${currentProduct.code}%0A`;
+            message += `💰 السعر: ${currentProduct.price} جنيه%0A`;
             
             if (selectedSize) {
-                message += '📏 المقاس: ' + selectedSize + '%0A';
+                message += `📏 المقاس: ${selectedSize}%0A`;
             }
             
-            message += '🖼️ الصورة: ' + currentProduct.images[0] + '%0A';
+            message += `%0A*💰 المجموع:* ${currentProduct.price} جنيه%0A%0A`;
+            message += `⏰ وقت الطلب: ${new Date().toLocaleString('ar-EG')}%0A%0A`;
+            message += `شكراً لثقتكم في Teto Classic! 🎉`;
             
-            message += '%0A*💰 المجموع:* ' + currentProduct.price + ' جنيه%0A%0A';
-            message += '⏰ وقت الطلب: ' + new Date().toLocaleString('ar-EG') + '%0A%0A';
-            message += 'شكراً لثقتكم في Teto Classic! 🎉';
-            
-            // Send via WhatsApp
-            const url = 'https://wa.me/201275533360?text=' + message;
+            // Open WhatsApp
+            const url = `https://wa.me/201275533360?text=${message}`;
             window.open(url, '_blank');
             
-            // Reset and close
+            // Close modal
             orderModal.classList.remove('active');
+            document.body.style.overflow = '';
             
             showNotification(currentLanguage === 'ar' 
                 ? 'تم إرسال طلبك بنجاح إلى الواتساب' 
@@ -1850,6 +1721,7 @@ document.addEventListener('DOMContentLoaded', function() {
         orderModal.addEventListener('click', function(e) {
             if (e.target === orderModal) {
                 orderModal.classList.remove('active');
+                document.body.style.overflow = '';
             }
         });
 
@@ -1875,86 +1747,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // أحداث الإحصائيات
-        statsBtn.addEventListener('click', function() {
-            adminStats.style.display = 'flex';
-            updateStatsDisplay();
-        });
-
-        closeStats.addEventListener('click', function() {
-            adminStats.style.display = 'none';
-        });
-
-        exportStats.addEventListener('click', function() {
-            exportStatistics();
-        });
-
-        resetStats.addEventListener('click', function() {
-            if (confirm(currentLanguage === 'ar' ? 'هل أنت متأكد من إعادة تعيين جميع الإحصائيات؟' : 'Are you sure you want to reset all statistics?')) {
-                resetStatistics();
+        // Close cart when clicking outside
+        cartModal.addEventListener('click', function(e) {
+            if (e.target === cartModal) {
+                cartModal.classList.remove('active');
+                document.body.style.overflow = '';
             }
         });
 
-        // إغلاق الإحصائيات بالنقر خارجها
-        adminStats.addEventListener('click', function(e) {
-            if (e.target === adminStats) {
-                adminStats.style.display = 'none';
+        // Prevent body scroll when modals are open
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (cartModal.classList.contains('active')) {
+                    cartModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+                if (orderModal.classList.contains('active')) {
+                    orderModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
             }
         });
-    }
-
-    // Update cart display
-    function updateCartDisplay() {
-        const cartItems = document.getElementById('cartItems');
-        const cartTotal = document.getElementById('cartTotal');
         
-        cartItems.innerHTML = '';
-        
-        if (cart.length === 0) {
-            cartItems.innerHTML = '<p>' + (currentLanguage === 'ar' ? 'السلة فارغة' : 'Cart is empty') + '</p>';
-            cartTotal.textContent = '0';
-            return;
-        }
-        
-        cart.forEach(item => {
-            const cartItem = document.createElement('div');
-            cartItem.className = 'cart-item';
-            cartItem.innerHTML = `
-                <div class="cart-item-img">
-                    <img src="${item.image}" alt="${item.name[currentLanguage]}">
-                </div>
-                <div class="cart-item-info">
-                    <h4 class="cart-item-title">${item.name[currentLanguage]}</h4>
-                    <div class="cart-item-price">${item.price} ${currentLanguage === 'ar' ? 'جنيه' : 'EGP'} × ${item.quantity}</div>
-                    <div class="cart-item-code">🆔 ${item.code}</div>
-                    ${item.size ? `<div class="cart-item-size">${currentLanguage === 'ar' ? 'المقاس: ' : 'Size: '}${item.size}</div>` : ''}
-                </div>
-                <button class="cart-item-remove" data-id="${item.id}">
-                    <i class="fas fa-trash"></i>
-                </button>
-            `;
-            
-            const removeBtn = cartItem.querySelector('.cart-item-remove');
-            removeBtn.addEventListener('click', function() {
-                removeFromCart(item.id, item.size);
-            });
-            
-            cartItems.appendChild(cartItem);
-        });
-        
-        cartTotal.textContent = getCartTotal();
-    }
-
-    // Remove item from cart
-    function removeFromCart(productId, size) {
-        cart = cart.filter(item => !(item.id === productId && item.size === size));
-        updateCartCount();
-        updateCartDisplay();
-    }
-
-    // Calculate cart total
-    function getCartTotal() {
-        return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+        console.log('Event listeners setup completed');
     }
 
     // Initialize the site
