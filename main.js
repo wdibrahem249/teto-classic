@@ -1,5 +1,4 @@
-// main.js - النسخة الكاملة بدون نظام الإحصائيات
-
+// main.js - النسخة المصححة والكاملة
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Teto Classic - Initializing...');
     
@@ -23,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const addToCartBtn = document.getElementById('addToCartBtn');
     const buyNowBtn = document.getElementById('buyNowBtn');
     const submitRatingBtn = document.getElementById('submitRating');
+    const starsInput = document.getElementById('starsInput');
     
     // Order form elements
     const orderProductImage = document.getElementById('orderProductImage');
@@ -38,13 +38,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentProduct = null;
     let selectedSize = '';
     let currentUserRating = 0;
-    
-    // بيانات التقييمات المشتركة بين جميع المستخدمين
     let productRatings = {};
-
-    // Sample products data
+    
+    // Sample products data - مصححة
     const products = {
-        shirts: [
+
+       shirts: [
             {
                 id: 1,
                 code: 'A-4',
@@ -525,6 +524,9 @@ document.addEventListener('DOMContentLoaded', function() {
         loadProducts();
         updateCartCount();
         
+        // Setup rating stars
+        setupRatingStars();
+        
         // Load language preference
         const savedLanguage = localStorage.getItem('tetoLanguage');
         if (savedLanguage) {
@@ -561,7 +563,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="product-offer">${currentLanguage === 'ar' ? 'عرض محدود' : 'Limited Offer'}</div>
             <div class="product-img">
                 <img src="${product.images[0]}" alt="${product.name[currentLanguage]}" loading="lazy" 
-                     onerror="this.onerror=null; this.src='images/default-product.jpg';">
+                     onerror="this.src='images/default.jpg'">
             </div>
             <div class="product-info">
                 <h3 class="product-title">${product.name[currentLanguage]}</h3>
@@ -615,7 +617,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return card;
     }
 
-    // نظام التقييمات المحسّن
+    // نظام التقييمات
     function loadRatings() {
         console.log('Loading ratings...');
         const savedRatings = localStorage.getItem('tetoProductRatings');
@@ -628,8 +630,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 productRatings = {};
             }
         } else {
-            // Add sample ratings if none exist
-            addSampleRatings();
+            productRatings = {};
         }
     }
 
@@ -642,67 +643,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function addSampleRatings() {
-        console.log('Adding sample ratings...');
+    function setupRatingStars() {
+        if (!starsInput) return;
         
-        // Sample users
-        const users = ['محمد أحمد', 'علي محمود', 'خالد عمر', 'سالم يوسف', 'أحمد سعيد', 
-                      'مصطفى كمال', 'يوسف حسن', 'حسام الدين', 'طارق عثمان', 'سامي رضا'];
-        
-        // Add ratings for all products
-        Object.values(products).forEach(category => {
-            category.forEach(product => {
-                // Add 2-5 ratings per product
-                const numRatings = Math.floor(Math.random() * 4) + 2;
-                for (let i = 0; i < numRatings; i++) {
-                    const rating = {
-                        id: Date.now() + Math.random(),
-                        productId: product.id,
-                        rating: Math.floor(Math.random() * 2) + 4, // 4-5 stars
-                        date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-                        user: users[Math.floor(Math.random() * users.length)]
-                    };
-                    
-                    if (!productRatings[product.id]) {
-                        productRatings[product.id] = [];
-                    }
-                    productRatings[product.id].push(rating);
-                }
+        const stars = starsInput.querySelectorAll('i');
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                setStarRating(rating);
+            });
+            
+            star.addEventListener('mouseover', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                highlightStars(rating);
             });
         });
         
-        saveRatings();
-        console.log('Sample ratings added');
-    }
-
-    function setupRatingListeners() {
-        console.log('Setting up rating listeners...');
-        
-        // Rating stars
-        const starsInput = document.querySelector('.stars-input');
-        if (starsInput) {
-            const stars = starsInput.querySelectorAll('i');
-            stars.forEach(star => {
-                star.addEventListener('click', function() {
-                    const rating = parseInt(this.getAttribute('data-rating'));
-                    setStarRating(rating);
-                });
-                
-                star.addEventListener('mouseover', function() {
-                    const rating = parseInt(this.getAttribute('data-rating'));
-                    highlightStars(rating);
-                });
-            });
-            
-            starsInput.addEventListener('mouseleave', function() {
-                highlightStars(currentUserRating);
-            });
-        }
-        
-        // Submit rating button
-        if (submitRatingBtn) {
-            submitRatingBtn.addEventListener('click', submitRating);
-        }
+        starsInput.addEventListener('mouseleave', function() {
+            highlightStars(currentUserRating);
+        });
     }
 
     function setStarRating(rating) {
@@ -711,70 +670,25 @@ document.addEventListener('DOMContentLoaded', function() {
         highlightStars(rating);
         
         // Enable submit button
-        const submitBtn = document.getElementById('submitRating');
-        if (submitBtn) {
-            submitBtn.disabled = false;
+        if (submitRatingBtn) {
+            submitRatingBtn.disabled = false;
         }
     }
 
     function highlightStars(rating) {
-        const stars = document.querySelectorAll('.stars-input i');
+        if (!starsInput) return;
+        
+        const stars = starsInput.querySelectorAll('i');
         stars.forEach((star, index) => {
-            if (index < rating) {
+            const starRating = parseInt(star.getAttribute('data-rating'));
+            if (starRating <= rating) {
                 star.classList.remove('far');
-                star.classList.add('fas');
-                star.classList.add('active');
+                star.classList.add('fas', 'active');
             } else {
-                star.classList.remove('fas');
+                star.classList.remove('fas', 'active');
                 star.classList.add('far');
-                star.classList.remove('active');
             }
         });
-    }
-
-    function submitRating() {
-        if (!currentProduct) {
-            showNotification(currentLanguage === 'ar' ? 'لم يتم تحديد منتج' : 'No product selected');
-            return;
-        }
-        
-        if (currentUserRating === 0) {
-            showNotification(currentLanguage === 'ar' ? 'يرجى اختيار تقييم' : 'Please select a rating');
-            return;
-        }
-        
-        // Generate random user name
-        const users = ['عميل Teto', 'مشتري راضي', 'عميل مميز', 'متابع Teto', 'عاشق الكلاسيك'];
-        const randomName = users[Math.floor(Math.random() * users.length)];
-        
-        const newRating = {
-            id: Date.now(),
-            productId: currentProduct.id,
-            rating: currentUserRating,
-            date: new Date().toISOString(),
-            user: randomName
-        };
-        
-        addProductRating(newRating);
-        updateProductRatingDisplay(currentProduct.id);
-        
-        // Reset
-        currentUserRating = 0;
-        document.getElementById('selectedRating').textContent = '0';
-        highlightStars(0);
-        submitRatingBtn.disabled = true;
-        
-        showNotification(currentLanguage === 'ar' 
-            ? 'شكراً لك! تم إضافة تقييمك بنجاح' 
-            : 'Thank you! Your rating has been added successfully');
-    }
-
-    function addProductRating(rating) {
-        if (!productRatings[rating.productId]) {
-            productRatings[rating.productId] = [];
-        }
-        productRatings[rating.productId].push(rating);
-        saveRatings();
     }
 
     function getProductRatings(productId) {
@@ -809,32 +723,72 @@ document.addEventListener('DOMContentLoaded', function() {
         return stars;
     }
 
+    function submitRating() {
+        if (!currentProduct) {
+            showNotification(currentLanguage === 'ar' ? 'لم يتم تحديد منتج' : 'No product selected');
+            return;
+        }
+        
+        if (currentUserRating === 0) {
+            showNotification(currentLanguage === 'ar' ? 'يرجى اختيار تقييم' : 'Please select a rating');
+            return;
+        }
+        
+        // Generate random user name
+        const users = ['عميل Teto', 'مشتري راضي', 'عميل مميز', 'متابع Teto', 'عاشق الكلاسيك'];
+        const randomName = users[Math.floor(Math.random() * users.length)];
+        
+        const newRating = {
+            id: Date.now(),
+            productId: currentProduct.id,
+            rating: currentUserRating,
+            date: new Date().toISOString(),
+            user: randomName
+        };
+        
+        addProductRating(newRating);
+        updateProductRatingDisplay(currentProduct.id);
+        
+        // Reset
+        currentUserRating = 0;
+        document.getElementById('selectedRating').textContent = '0';
+        highlightStars(0);
+        if (submitRatingBtn) {
+            submitRatingBtn.disabled = true;
+        }
+        
+        showNotification(currentLanguage === 'ar' 
+            ? 'شكراً لك! تم إضافة تقييمك بنجاح' 
+            : 'Thank you! Your rating has been added successfully');
+    }
+
+    function addProductRating(rating) {
+        if (!productRatings[rating.productId]) {
+            productRatings[rating.productId] = [];
+        }
+        productRatings[rating.productId].push(rating);
+        saveRatings();
+    }
+
     function updateProductRatingDisplay(productId) {
         const ratings = getProductRatings(productId);
         const averageRating = calculateAverageRating(ratings);
         const totalRatings = ratings.length;
         
         // Update all rating displays
-        const elements = {
-            'quickAverageRating': averageRating,
-            'ratingCount': totalRatings,
-            'averageRating': averageRating,
-            'totalRatings': totalRatings
-        };
+        const quickAverageRating = document.getElementById('quickAverageRating');
+        const ratingCount = document.getElementById('ratingCount');
+        const averageRatingNumber = document.getElementById('averageRatingNumber');
+        const totalRatingsElement = document.getElementById('totalRatings');
+        const quickRatingStars = document.getElementById('quickRatingStars');
+        const averageRatingStars = document.getElementById('averageRatingStars');
         
-        for (const [id, value] of Object.entries(elements)) {
-            const element = document.getElementById(id);
-            if (element) element.textContent = value;
-        }
-        
-        // Update stars
-        const starContainers = ['quickRatingStars', 'averageRatingStars'];
-        starContainers.forEach(containerId => {
-            const container = document.getElementById(containerId);
-            if (container) {
-                container.innerHTML = generateStarRating(averageRating);
-            }
-        });
+        if (quickAverageRating) quickAverageRating.textContent = averageRating;
+        if (ratingCount) ratingCount.textContent = totalRatings;
+        if (averageRatingNumber) averageRatingNumber.textContent = averageRating;
+        if (totalRatingsElement) totalRatingsElement.textContent = totalRatings;
+        if (quickRatingStars) quickRatingStars.innerHTML = generateStarRating(averageRating);
+        if (averageRatingStars) averageRatingStars.innerHTML = generateStarRating(averageRating);
         
         // Update ratings list
         updateRatingsList(ratings);
@@ -859,14 +813,28 @@ document.addEventListener('DOMContentLoaded', function() {
         sortedRatings.forEach(rating => {
             const ratingElement = document.createElement('div');
             ratingElement.className = 'rating-item';
+            
+            const date = new Date(rating.date);
+            const formattedDate = formatDate(date);
+            
             ratingElement.innerHTML = `
-                <div class="rating-meta">
-                    <div class="rating-stars-small">
+                <div class="rating-header">
+                    <div class="rating-user-info">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="user-details">
+                            <strong class="user-name">${rating.user}</strong>
+                            <span class="rating-date">${formattedDate}</span>
+                        </div>
+                    </div>
+                    <div class="rating-stars-display">
                         ${generateStarRating(rating.rating)}
                     </div>
-                    <span class="rating-date">${formatDate(rating.date)}</span>
                 </div>
-                <div class="rating-user">${rating.user}</div>
+                <div class="rating-comment">
+                    ${getRatingComment(rating.rating)}
+                </div>
             `;
             container.appendChild(ratingElement);
         });
@@ -895,8 +863,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function getRatingComment(rating) {
+        const comments = {
+            1: 'غير راضٍ عن المنتج',
+            2: 'منتج متوسط الجودة',
+            3: 'منتج جيد',
+            4: 'منتج ممتاز',
+            5: 'منتج رائع ومميز'
+        };
+        return comments[Math.round(rating)] || 'تقييم جيد';
+    }
+
     // Open order form directly
     function openOrderForm(product) {
+        if (!orderProductImage || !orderProductName || !orderProductPrice || !orderProductCode || !orderProductSize) {
+            console.error('Order form elements not found');
+            return;
+        }
+        
         // Update product info
         orderProductImage.src = product.images[0];
         orderProductName.textContent = product.name[currentLanguage];
@@ -909,7 +893,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('primaryPhone').value = '';
         document.getElementById('secondaryPhone').value = '';
         document.getElementById('customerAddress').value = '';
-        additionalNotes.value = '';
+        if (additionalNotes) additionalNotes.value = '';
         
         // Show modal
         orderModal.classList.add('active');
@@ -930,63 +914,71 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Scroll to top of page
-        window.scrollTo({ top: 80, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         
         // Show product detail section
         const productDetailSection = document.getElementById('product-detail');
-        productDetailSection.classList.add('active');
+        if (productDetailSection) {
+            productDetailSection.classList.add('active');
+        }
         
         // Update product details
-        document.getElementById('productDetailTitle').textContent = product.name[currentLanguage];
-        document.getElementById('productDetailPrice').textContent = product.price + ' ' + (currentLanguage === 'ar' ? 'جنيه' : 'EGP');
-        document.getElementById('productDetailCode').textContent = product.code;
+        const productDetailTitle = document.getElementById('productDetailTitle');
+        const productDetailPrice = document.getElementById('productDetailPrice');
+        const productDetailCode = document.getElementById('productDetailCode');
+        
+        if (productDetailTitle) productDetailTitle.textContent = product.name[currentLanguage];
+        if (productDetailPrice) productDetailPrice.textContent = product.price + ' ' + (currentLanguage === 'ar' ? 'جنيه' : 'EGP');
+        if (productDetailCode) productDetailCode.textContent = product.code;
         
         // Update main image
         const productDetailImage = document.getElementById('productDetailImage');
-        if (product.images && product.images.length > 0) {
+        if (productDetailImage && product.images && product.images.length > 0) {
             productDetailImage.src = product.images[0];
             productDetailImage.alt = product.name[currentLanguage];
-        } else {
-            productDetailImage.src = 'images/default-product.jpg';
         }
         
         // Update thumbnails
         const thumbnailsContainer = document.querySelector('.image-thumbnails');
-        thumbnailsContainer.innerHTML = '';
-        
-        if (product.images && product.images.length > 0) {
-            product.images.forEach((image, index) => {
-                const thumbnail = document.createElement('div');
-                thumbnail.className = 'thumbnail' + (index === 0 ? ' active' : '');
-                thumbnail.innerHTML = `<img src="${image}" alt="${product.name[currentLanguage]} ${index + 1}">`;
-                
-                thumbnail.addEventListener('click', function() {
-                    productDetailImage.src = image;
-                    document.querySelectorAll('.thumbnail').forEach(thumb => {
-                        thumb.classList.remove('active');
+        if (thumbnailsContainer) {
+            thumbnailsContainer.innerHTML = '';
+            
+            if (product.images && product.images.length > 0) {
+                product.images.forEach((image, index) => {
+                    const thumbnail = document.createElement('div');
+                    thumbnail.className = 'thumbnail' + (index === 0 ? ' active' : '');
+                    thumbnail.innerHTML = `<img src="${image}" alt="${product.name[currentLanguage]} ${index + 1}" onerror="this.src='images/default.jpg'">`;
+                    
+                    thumbnail.addEventListener('click', function() {
+                        if (productDetailImage) {
+                            productDetailImage.src = image;
+                        }
+                        document.querySelectorAll('.thumbnail').forEach(thumb => {
+                            thumb.classList.remove('active');
+                        });
+                        thumbnail.classList.add('active');
                     });
-                    thumbnail.classList.add('active');
+                    
+                    thumbnailsContainer.appendChild(thumbnail);
                 });
-                
-                thumbnailsContainer.appendChild(thumbnail);
-            });
-        } else {
-            thumbnailsContainer.innerHTML = '<p>' + (currentLanguage === 'ar' ? 'لا توجد صور إضافية' : 'No additional images') + '</p>';
+            }
         }
         
         // Update description
         const descriptionContent = document.querySelector('.description-content');
-        const descriptionHTML = `
-            <p>${product.description[currentLanguage] || product.description.ar}</p>
-            <h4>${currentLanguage === 'ar' ? 'المميزات:' : 'Features:'}</h4>
-            <ul>
-                ${product.features[currentLanguage].map(feature => `<li>${feature}</li>`).join('')}
-            </ul>
-        `;
-        descriptionContent.innerHTML = descriptionHTML;
+        if (descriptionContent) {
+            const descriptionHTML = `
+                <p>${product.description[currentLanguage] || product.description.ar}</p>
+                <h4>${currentLanguage === 'ar' ? 'المميزات:' : 'Features:'}</h4>
+                <ul>
+                    ${product.features[currentLanguage].map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+            `;
+            descriptionContent.innerHTML = descriptionHTML;
+        }
         
         // Update sizes
-        const sizeOptionsContainer = document.querySelector('.size-options');
+        const sizeOptionsContainer = document.getElementById('sizeOptions');
         if (sizeOptionsContainer) {
             sizeOptionsContainer.innerHTML = '';
             
@@ -1006,7 +998,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             selectedSize = size;
                             
                             // Update help text
-                            const sizeHelp = document.querySelector('.size-help span');
+                            const sizeHelp = document.getElementById('sizeHelpText');
                             if (sizeHelp) {
                                 sizeHelp.textContent = currentLanguage === 'ar' 
                                     ? `المقاس المختار: ${size}` 
@@ -1017,12 +1009,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         sizeOptionsContainer.appendChild(sizeOption);
                     }
                 });
-                
-                if (sizeOptionsContainer.children.length === 0) {
-                    sizeOptionsContainer.innerHTML = `<div class="no-sizes">${currentLanguage === 'ar' ? 'لا توجد مقاسات متاحة' : 'No sizes available'}</div>`;
-                }
-            } else {
-                sizeOptionsContainer.innerHTML = `<div class="no-sizes">${currentLanguage === 'ar' ? 'لا توجد مقاسات متاحة' : 'No sizes available'}</div>`;
             }
         }
         
@@ -1030,21 +1016,19 @@ document.addEventListener('DOMContentLoaded', function() {
         updateProductRatingDisplay(product.id);
         
         // Setup rating listeners
-        setTimeout(() => {
-            setupRatingListeners();
-            
-            // Reset rating input
-            const selectedRatingElement = document.getElementById('selectedRating');
-            if (selectedRatingElement) {
-                selectedRatingElement.textContent = '0';
-            }
-            highlightStars(0);
-            
-            const submitBtn = document.getElementById('submitRating');
-            if (submitBtn) {
-                submitBtn.disabled = true;
-            }
-        }, 100);
+        if (submitRatingBtn) {
+            submitRatingBtn.addEventListener('click', submitRating);
+        }
+        
+        // Reset rating input
+        currentUserRating = 0;
+        if (document.getElementById('selectedRating')) {
+            document.getElementById('selectedRating').textContent = '0';
+        }
+        highlightStars(0);
+        if (submitRatingBtn) {
+            submitRatingBtn.disabled = true;
+        }
         
         // Load suggestions
         loadProductSuggestions(product);
@@ -1084,7 +1068,7 @@ document.addEventListener('DOMContentLoaded', function() {
             suggestionCard.innerHTML = `
                 <div class="product-img">
                     <img src="${suggestion.images[0]}" alt="${suggestion.name[currentLanguage]}" loading="lazy"
-                         onerror="this.onerror=null; this.src='images/default-product.jpg';">
+                         onerror="this.src='images/default.jpg'">
                 </div>
                 <div class="product-info">
                     <h3 class="product-title">${suggestion.name[currentLanguage]}</h3>
@@ -1193,13 +1177,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCartCount() {
         const cartCount = document.querySelector('.cart-count');
-        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-        cartCount.textContent = totalItems;
+        if (cartCount) {
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
     }
 
     function updateCartDisplay() {
         const cartItems = document.getElementById('cartItems');
         const cartTotal = document.getElementById('cartTotal');
+        
+        if (!cartItems || !cartTotal) return;
         
         cartItems.innerHTML = '';
         
@@ -1216,7 +1204,7 @@ document.addEventListener('DOMContentLoaded', function() {
             cartItem.className = 'cart-item';
             cartItem.innerHTML = `
                 <div class="cart-item-img">
-                    <img src="${item.image}" alt="${item.name[currentLanguage]}">
+                    <img src="${item.image}" alt="${item.name[currentLanguage]}" onerror="this.src='images/default.jpg'">
                 </div>
                 <div class="cart-item-info">
                     <h4 class="cart-item-title">${item.name[currentLanguage]}</h4>
@@ -1267,12 +1255,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setTimeout(() => {
             if (notification.parentNode) {
-                notification.style.animation = 'slideOutRight 0.3s ease';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
+                notification.remove();
             }
         }, 3000);
     }
@@ -1313,7 +1296,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Update cart
-        if (cartModal.classList.contains('active')) {
+        if (cartModal && cartModal.classList.contains('active')) {
             updateCartDisplay();
         }
         
@@ -1325,8 +1308,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateAllTexts() {
         // Navigation
         document.querySelectorAll('.nav-link').forEach((link, index) => {
-            const texts = ['الرئيسية', 'القمصان', 'البناطلين', 'الأحذية', 'آراء العملاء'];
-            const enTexts = ['Home', 'Shirts', 'Pants', 'Shoes', 'Customer Reviews'];
+            const texts = ['الرئيسية', 'القمصان', 'البناطلين', 'الأحذية'];
+            const enTexts = ['Home', 'Shirts', 'Pants', 'Shoes'];
             link.textContent = currentLanguage === 'ar' ? texts[index] : enTexts[index];
         });
         
@@ -1400,24 +1383,23 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update buttons
         document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-            if (!btn.closest('.product-card')) {
+            if (btn.id !== 'addToCartBtn' || btn.closest('.product-card')) {
                 const icon = btn.querySelector('i');
                 btn.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.addToCart}`;
             }
         });
         
         document.querySelectorAll('.buy-now-btn').forEach(btn => {
-            if (!btn.closest('.product-card')) {
+            if (btn.id !== 'buyNowBtn' || btn.closest('.product-card')) {
                 const icon = btn.querySelector('i');
                 btn.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.buyNow}`;
             }
         });
         
         // Update back to products
-        const backBtn = document.querySelector('.back-to-products');
-        if (backBtn) {
-            const icon = backBtn.querySelector('i');
-            backBtn.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.backToProducts}`;
+        if (backToProducts) {
+            const icon = backToProducts.querySelector('i');
+            backToProducts.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.backToProducts}`;
         }
         
         // Update size selection
@@ -1462,10 +1444,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        const submitRating = document.getElementById('submitRating');
-        if (submitRating) {
-            const icon = submitRating.querySelector('i');
-            submitRating.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.submitRating}`;
+        if (submitRatingBtn) {
+            const icon = submitRatingBtn.querySelector('i');
+            submitRatingBtn.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.submitRating}`;
         }
         
         const reviewsHeading = document.querySelector('.ratings-list h4');
@@ -1515,10 +1496,9 @@ document.addEventListener('DOMContentLoaded', function() {
             notesLabel.textContent = langData.additionalNotes;
         }
         
-        const submitOrderBtn = document.getElementById('submitOrder');
-        if (submitOrderBtn) {
-            const icon = submitOrderBtn.querySelector('i');
-            submitOrderBtn.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.submitOrder}`;
+        if (submitOrder) {
+            const icon = submitOrder.querySelector('i');
+            submitOrder.innerHTML = `${icon ? icon.outerHTML + ' ' : ''}${langData.submitOrder}`;
         }
         
         // Update cart modal
@@ -1527,14 +1507,12 @@ document.addEventListener('DOMContentLoaded', function() {
             cartTitle.textContent = langData.shoppingCart;
         }
         
-        const continueBtn = document.getElementById('continueShopping');
-        if (continueBtn) {
-            continueBtn.textContent = langData.continueShopping;
+        if (continueShopping) {
+            continueShopping.textContent = langData.continueShopping;
         }
         
-        const checkoutBtn = document.getElementById('proceedCheckout');
-        if (checkoutBtn) {
-            checkoutBtn.textContent = langData.proceedCheckout;
+        if (proceedCheckout) {
+            proceedCheckout.textContent = langData.proceedCheckout;
         }
         
         // Update cart total text
@@ -1569,13 +1547,17 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Setting up event listeners...');
         
         // Menu button
-        menuBtn.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
-        });
+        if (menuBtn) {
+            menuBtn.addEventListener('click', function() {
+                if (navMenu) {
+                    navMenu.classList.toggle('active');
+                }
+            });
+        }
 
         // Close menu when clicking outside
         document.addEventListener('click', function(e) {
-            if (!menuBtn.contains(e.target) && !navMenu.contains(e.target)) {
+            if (menuBtn && navMenu && !menuBtn.contains(e.target) && !navMenu.contains(e.target)) {
                 navMenu.classList.remove('active');
             }
         });
@@ -1590,8 +1572,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     section.classList.remove('active');
                 });
                 
-                document.getElementById(category).classList.add('active');
-                navMenu.classList.remove('active');
+                const targetSection = document.getElementById(category);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                }
+                
+                if (navMenu) {
+                    navMenu.classList.remove('active');
+                }
                 
                 // Scroll to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1599,170 +1587,222 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Back to products
-        backToProducts.addEventListener('click', function(e) {
-            e.preventDefault();
-            sections.forEach(section => {
-                section.classList.remove('active');
+        if (backToProducts) {
+            backToProducts.addEventListener('click', function(e) {
+                e.preventDefault();
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById('home').classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
-            document.getElementById('home').classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        }
 
         // Add to cart in detail page
-        addToCartBtn.addEventListener('click', function() {
-            if (currentProduct) {
-                addToCart(currentProduct);
-            }
-        });
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', function() {
+                if (currentProduct) {
+                    addToCart(currentProduct);
+                }
+            });
+        }
 
         // Buy now in detail page
-        buyNowBtn.addEventListener('click', function() {
-            if (currentProduct) {
-                openOrderForm(currentProduct);
-            }
-        });
+        if (buyNowBtn) {
+            buyNowBtn.addEventListener('click', function() {
+                if (currentProduct) {
+                    openOrderForm(currentProduct);
+                }
+            });
+        }
 
         // Cart button
-        cartBtn.addEventListener('click', function() {
-            cartModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            updateCartDisplay();
-        });
+        if (cartBtn) {
+            cartBtn.addEventListener('click', function() {
+                if (cartModal) {
+                    cartModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    updateCartDisplay();
+                }
+            });
+        }
 
         // Close cart
-        closeCart.addEventListener('click', function() {
-            cartModal.classList.remove('active');
-            document.body.style.overflow = '';
-        });
+        if (closeCart) {
+            closeCart.addEventListener('click', function() {
+                if (cartModal) {
+                    cartModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
 
         // Continue shopping
-        continueShopping.addEventListener('click', function() {
-            cartModal.classList.remove('active');
-            document.body.style.overflow = '';
-        });
+        if (continueShopping) {
+            continueShopping.addEventListener('click', function() {
+                if (cartModal) {
+                    cartModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
 
         // Proceed to checkout
-        proceedCheckout.addEventListener('click', function() {
-            if (cart.length === 0) {
-                showNotification(currentLanguage === 'ar' ? 'السلة فارغة' : 'Cart is empty');
-                return;
-            }
-            // يمكن تطوير هذه الخاصية لاحقاً
-            showNotification(currentLanguage === 'ar' ? 'سيتم تطوير هذه الخاصية قريباً' : 'This feature will be developed soon');
-        });
+        if (proceedCheckout) {
+            proceedCheckout.addEventListener('click', function() {
+                if (cart.length === 0) {
+                    showNotification(currentLanguage === 'ar' ? 'السلة فارغة' : 'Cart is empty');
+                    return;
+                }
+                // يمكن تطوير هذه الخاصية لاحقاً
+                showNotification(currentLanguage === 'ar' ? 'سيتم تطوير هذه الخاصية قريباً' : 'This feature will be developed soon');
+            });
+        }
 
         // Close order modal
-        closeOrder.addEventListener('click', function() {
-            orderModal.classList.remove('active');
-            document.body.style.overflow = '';
-        });
+        if (closeOrder) {
+            closeOrder.addEventListener('click', function() {
+                if (orderModal) {
+                    orderModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
 
         // Submit order
-        submitOrder.addEventListener('click', function() {
-            const name = document.getElementById('customerName').value.trim();
-            const primaryPhone = document.getElementById('primaryPhone').value.trim();
-            const address = document.getElementById('customerAddress').value.trim();
-            
-            if (!name || !primaryPhone || !address) {
-                showNotification(currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة' : 'Please fill all required fields');
-                return;
-            }
-            
-            if (!currentProduct) {
-                showNotification(currentLanguage === 'ar' ? 'لم يتم تحديد منتج' : 'No product selected');
-                return;
-            }
-            
-            // Create WhatsApp message
-            let message = `*🛒 طلب جديد - Teto Classic*%0A%0A`;
-            message += `*📋 معلومات العميل:*%0A`;
-            message += `👤 الاسم: ${name}%0A`;
-            message += `📞 الهاتف: ${primaryPhone}%0A`;
-            
-            const secondaryPhone = document.getElementById('secondaryPhone').value.trim();
-            if (secondaryPhone) {
-                message += `📱 الهاتف الاحتياطي: ${secondaryPhone}%0A`;
-            }
-            
-            message += `📍 العنوان: ${address}%0A`;
-            
-            const notes = additionalNotes.value.trim();
-            if (notes) {
-                message += `📝 الملاحظات: ${notes}%0A`;
-            }
-            
-            message += `%0A*🛍️ المنتج المطلوب:*%0A`;
-            message += `📦 المنتج: ${currentProduct.name[currentLanguage]}%0A`;
-            message += `🆔 الرمز: ${currentProduct.code}%0A`;
-            message += `💰 السعر: ${currentProduct.price} جنيه%0A`;
-            
-            if (selectedSize) {
-                message += `📏 المقاس: ${selectedSize}%0A`;
-            }
-            
-            message += `%0A*💰 المجموع:* ${currentProduct.price} جنيه%0A%0A`;
-            message += `⏰ وقت الطلب: ${new Date().toLocaleString('ar-EG')}%0A%0A`;
-            message += `شكراً لثقتكم في Teto Classic! 🎉`;
-            
-            // Open WhatsApp
-            const url = `https://wa.me/201275533360?text=${message}`;
-            window.open(url, '_blank');
-            
-            // Close modal
-            orderModal.classList.remove('active');
-            document.body.style.overflow = '';
-            
-            showNotification(currentLanguage === 'ar' 
-                ? 'تم إرسال طلبك بنجاح إلى الواتساب' 
-                : 'Your order has been sent successfully to WhatsApp');
-        });
+        if (submitOrder) {
+            submitOrder.addEventListener('click', function() {
+                const name = document.getElementById('customerName');
+                const primaryPhone = document.getElementById('primaryPhone');
+                const address = document.getElementById('customerAddress');
+                
+                if (!name || !primaryPhone || !address) {
+                    showNotification(currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة' : 'Please fill all required fields');
+                    return;
+                }
+                
+                const nameValue = name.value.trim();
+                const primaryPhoneValue = primaryPhone.value.trim();
+                const addressValue = address.value.trim();
+                
+                if (!nameValue || !primaryPhoneValue || !addressValue) {
+                    showNotification(currentLanguage === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة' : 'Please fill all required fields');
+                    return;
+                }
+                
+                if (!currentProduct) {
+                    showNotification(currentLanguage === 'ar' ? 'لم يتم تحديد منتج' : 'No product selected');
+                    return;
+                }
+                
+                // Create WhatsApp message
+                let message = `*🛒 طلب جديد - Teto Classic*%0A%0A`;
+                message += `*📋 معلومات العميل:*%0A`;
+                message += `👤 الاسم: ${nameValue}%0A`;
+                message += `📞 الهاتف: ${primaryPhoneValue}%0A`;
+                
+                const secondaryPhone = document.getElementById('secondaryPhone');
+                if (secondaryPhone) {
+                    const secondaryPhoneValue = secondaryPhone.value.trim();
+                    if (secondaryPhoneValue) {
+                        message += `📱 الهاتف الاحتياطي: ${secondaryPhoneValue}%0A`;
+                    }
+                }
+                
+                message += `📍 العنوان: ${addressValue}%0A`;
+                
+                if (additionalNotes) {
+                    const notesValue = additionalNotes.value.trim();
+                    if (notesValue) {
+                        message += `📝 الملاحظات: ${notesValue}%0A`;
+                    }
+                }
+                
+                message += `%0A*🛍️ المنتج المطلوب:*%0A`;
+                message += `📦 المنتج: ${currentProduct.name[currentLanguage]}%0A`;
+                message += `🆔 الرمز: ${currentProduct.code}%0A`;
+                message += `💰 السعر: ${currentProduct.price} جنيه%0A`;
+                
+                if (selectedSize) {
+                    message += `📏 المقاس: ${selectedSize}%0A`;
+                }
+                
+                message += `%0A*💰 المجموع:* ${currentProduct.price} جنيه%0A%0A`;
+                message += `⏰ وقت الطلب: ${new Date().toLocaleString('ar-EG')}%0A%0A`;
+                message += `شكراً لثقتكم في Teto Classic! 🎉`;
+                
+                // Open WhatsApp
+                const url = `https://wa.me/201275533360?text=${message}`;
+                window.open(url, '_blank');
+                
+                // Close modal
+                if (orderModal) {
+                    orderModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+                
+                showNotification(currentLanguage === 'ar' 
+                    ? 'تم إرسال طلبك بنجاح إلى الواتساب' 
+                    : 'Your order has been sent successfully to WhatsApp');
+            });
+        }
 
         // Close order modal when clicking outside
-        orderModal.addEventListener('click', function(e) {
-            if (e.target === orderModal) {
-                orderModal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
+        if (orderModal) {
+            orderModal.addEventListener('click', function(e) {
+                if (e.target === orderModal) {
+                    orderModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
 
         // Language switcher
-        languageBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            languageOptions.classList.toggle('active');
-        });
+        if (languageBtn) {
+            languageBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (languageOptions) {
+                    languageOptions.classList.toggle('active');
+                }
+            });
+        }
 
         // Language options
         languageOptionItems.forEach(option => {
             option.addEventListener('click', function() {
                 const lang = this.getAttribute('data-lang');
                 switchLanguage(lang);
-                languageOptions.classList.remove('active');
+                if (languageOptions) {
+                    languageOptions.classList.remove('active');
+                }
             });
         });
 
         // Close language options when clicking outside
         document.addEventListener('click', function(e) {
-            if (!languageBtn.contains(e.target) && !languageOptions.contains(e.target)) {
+            if (languageBtn && languageOptions && !languageBtn.contains(e.target) && !languageOptions.contains(e.target)) {
                 languageOptions.classList.remove('active');
             }
         });
 
         // Close cart when clicking outside
-        cartModal.addEventListener('click', function(e) {
-            if (e.target === cartModal) {
-                cartModal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
+        if (cartModal) {
+            cartModal.addEventListener('click', function(e) {
+                if (e.target === cartModal) {
+                    cartModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
 
         // Prevent body scroll when modals are open
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                if (cartModal.classList.contains('active')) {
+                if (cartModal && cartModal.classList.contains('active')) {
                     cartModal.classList.remove('active');
                     document.body.style.overflow = '';
                 }
-                if (orderModal.classList.contains('active')) {
+                if (orderModal && orderModal.classList.contains('active')) {
                     orderModal.classList.remove('active');
                     document.body.style.overflow = '';
                 }
