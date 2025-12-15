@@ -21,7 +21,6 @@
                     <li><a href="#" class="nav-link" data-category="shirts">القمصان</a></li>
                     <li><a href="#" class="nav-link" data-category="pants">البناطلين</a></li>
                     <li><a href="#" class="nav-link" data-category="shoes">الأحذية</a></li>
-                    <li><a href="#" class="nav-link" data-category="reviews">آراء العملاء</a></li>
                 </ul>
             </nav>
             <div class="logo">
@@ -72,34 +71,34 @@
                 <h2 class="section-title">آراء العملاء</h2>
                 <div class="reviews">
                     <div class="review-img">
-                        <img src="images/revew 1.jpg" alt="رأي العميل 1" loading="lazy">
+                        <img src="images/revew 1.jpg" alt="رأي العميل 1" loading="lazy" onerror="this.src='images/default.jpg'">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 2.jpg" alt="رأي العميل 2" loading="lazy">
+                        <img src="images/revew 2.jpg" alt="رأي العميل 2" loading="lazy" onerror="this.src='images/default.jpg'">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 3.jpg" alt="رأي العميل 3" loading="lazy">
+                        <img src="images/revew 3.jpg" alt="رأي العميل 3" loading="lazy" onerror="this.src='images/default.jpg'">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 4.jpg" alt="رأي العميل 4" loading="lazy">
+                        <img src="images/revew 4.jpg" alt="رأي العميل 4" loading="lazy" onerror="this.src='images/default.jpg'">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 5.jpg" alt="رأي العميل 5" loading="lazy">
+                        <img src="images/revew 5.jpg" alt="رأي العميل 5" loading="lazy" onerror="this.src='images/default.jpg'">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 6.jpg" alt="رأي العميل 6" loading="lazy">
+                        <img src="images/revew 6.jpg" alt="رأي العميل 6" loading="lazy" onerror="this.src='images/default.jpg'">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 7.jpg" alt="رأي العميل 7" loading="lazy">
+                        <img src="images/revew 7.jpg" alt="رأي العميل 7" loading="lazy" onerror="this.src='images/default.jpg'">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 8.jpg" alt="رأي العميل 8" loading="lazy">
+                        <img src="images/revew 8.jpg" alt="رأي العميل 8" loading="lazy" onerror="this.src='images/default.jpg'">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 9.jpg" alt="رأي العميل 9" loading="lazy">
+                        <img src="images/revew 9.jpg" alt="رأي العميل 9" loading="lazy" onerror="this.src='images/default.jpg'">
                     </div>
                     <div class="review-img">
-                        <img src="images/revew 10.jpg" alt="رأي العميل 10" loading="lazy">
+                        <img src="images/revew 10.jpg" alt="رأي العميل 10" loading="lazy" onerror="this.src='images/default.jpg'">
                     </div>
                 </div>
 
@@ -161,7 +160,7 @@
                     <div class="product-detail-content">
                         <div class="product-images">
                             <div class="main-image">
-                                <img id="productDetailImage" src="" alt="Product Image">
+                                <img id="productDetailImage" src="" alt="Product Image" onerror="this.src='images/default.jpg'">
                             </div>
                             <div class="image-thumbnails" id="imageThumbnails">
                                 <!-- Thumbnails will be added by JavaScript -->
@@ -178,7 +177,7 @@
                                 <div class="rating-stars" id="quickRatingStars">
                                     <!-- Stars will be dynamically generated -->
                                 </div>
-                                <span class="rating-text">(<span id="quickAverageRating">0</span>) <span id="ratingCount">0</span> تقييم</span>
+                                <span class="rating-text">(<span id="quickAverageRating">0.0</span>) <span id="ratingCount">0</span> تقييم</span>
                             </div>
                             
                             <div class="product-meta">
@@ -252,10 +251,11 @@
                         
                         <!-- متوسط التقييم -->
                         <div class="average-rating">
+                            <div class="rating-number" id="averageRatingNumber">0.0</div>
                             <div class="rating-stars" id="averageRatingStars">
                                 <!-- Stars will be dynamically generated -->
                             </div>
-                            <span class="rating-text">(<span id="averageRating">0</span>) بناءً على <span id="totalRatings">0</span> تقييم</span>
+                            <span class="rating-text">بناءً على <span id="totalRatings">0</span> تقييم</span>
                         </div>
                         
                         <!-- إضافة تقييم جديد -->
@@ -281,7 +281,7 @@
                         <div class="ratings-list">
                             <h4>آراء العملاء</h4>
                             <div class="ratings-container" id="ratingsContainer">
-                                <div class="no-ratings">لا توجد تقييمات حتى الآن. كن أول من يقيم هذا المنتج!</div>
+                                <!-- Ratings will be loaded here -->
                             </div>
                         </div>
                     </div>
@@ -309,7 +309,7 @@
                     <div class="order-summary">
                         <h3>ملخص الطلب</h3>
                         <div class="order-product-info">
-                            <img id="orderProductImage" src="" alt="Product Image">
+                            <img id="orderProductImage" src="" alt="Product Image" onerror="this.src='images/default.jpg'">
                             <div class="order-product-details">
                                 <h4 id="orderProductName"></h4>
                                 <div class="order-product-price" id="orderProductPrice"></div>
@@ -384,6 +384,7 @@
         </div>
     </footer>
 
+    <!-- JavaScript Files -->
     <script src="main.js"></script>
 </body>
 </html>
