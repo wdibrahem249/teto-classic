@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 price: 399,
                 images: ['images/shirt.2.1.jpg', 'images/shirt.2.2.jpg', 'images/shirt.2.3.jpg'],
                 category: 'shirts',
-                sizes: ["", "L", "", ""],
+                sizes: ["", "2xL", "", ""],
                 description: {
                     ar: 'قميص زيتي فاخر يناسب كل المناسبات والمشاوير الرسمية.',
                     en: 'Luxurious olive green shirt suitable for all formal occasions and outings.'
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 price: 424,
                 images: ['images/shirt.4.1.jpg'],
                 category: 'shirts',
-                sizes: ["", "3XL", "2XL"],
+                sizes: ["", "3XL", ""],
                 description: {
                     ar: 'قميص حلاوي سادة بكم طويل، يعكس الأناقة والثقة، مثالي للقاءات المهمة.',
                     en: 'Long-sleeve shirt in powder pink, designed to reflect elegance and confidence.'
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 price: 424,
                 images: ['images/shirt.5.1.jpg'],
                 category: 'shirts',
-                sizes: ["", "M", "2XL"],
+                sizes: ["", "M", ""],
                 description: {
                     ar: 'قميص حلاوي مخطط بكم طويل، يعكس الأناقة والثقة، مثالي للقاءات المهمة.',
                     en: 'Long-sleeve shirt in powder pink with stripes, designed to reflect elegance and confidence.'
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             {
                 id: 7,
-                code: 'A-2',
+                code: 'A-9',
                 name: {
                     ar: 'قميص مخطط رمادي',
                     en: 'Striped Gray Shirt'
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 price: 349,
                 images: [ 'images/shirt.8.2.jpg'],
                 category: 'shirts',
-                sizes: ["", "L", "XL"],
+                sizes: ["", "L", ""],
                 description: {
                     ar: 'قميص أسود فاخر بكم طويل، يعكس الأناقة والثقة، مثالي للقاءات الرسمية.',
                     en: 'Luxurious long-sleeve black shirt, designed for formal occasions.'
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 price: 424,
                 images: ['images/shirt.12.1.jpg', 'images/shirt.12.2.jpg'],
                 category: 'shirts',
-                sizes: ["L", "XL", "2XL", "3XL"],
+                sizes: ["L", "", "", "3XL"],
                 description: {
                     ar: 'قميص كاروهات أبيض مخطط أسود راقي بكم طويل.',
                     en: 'Classy white plaid shirt with black stripes, long-sleeve.'
@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 price: 424,
                 images: ['images/shirt.13.1.jpg', 'images/shirt.13.2.jpg'],
                 category: 'shirts',
-                sizes: ["L", "", "2XL", ""],
+                sizes: ["", "", "3XL", ""],
                 description: {
                     ar: 'قميص أخضر فاتح مناسب للطلعات البسيطة راقي بكم طويل.',
                     en: 'Classy light green long-sleeve shirt suitable for casual outings.'
@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 price: 449,
                 images: ['images/shirt.14.1.jpg', 'images/shirt.14.2.jpg', 'images/shirt.14.3.jpg'],
                 category: 'shirts',
-                sizes: ["L", "", "2XL", "3XL"],
+                sizes: ["L", "", "", ""],
                 description: {
                     ar: 'قميص لبني فاتح مناسب للطلعات البسيطة راقي بكم طويل.',
                     en: 'Classy light blue long-sleeve shirt suitable for casual outings.'
@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 price: 499,
                 images: ['images/shirt.15.1.jpeg'],
                 category: 'shirts',
-                sizes: ["2XL", "4XL", "5XL", ""],
+                sizes: ["", "4XL", "5XL", ""],
                 description: {
                     ar: 'قميص كبدي سادة فاخر مناسب للطلعات البسيطة راقي بكم طويل',
                     en: 'Classy dark maroon solid shirt, luxurious, suitable for casual outings, long-sleeve.'
@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             {
                 id: 17,
-                code: 'B-15',
+                code: 'B-5',
                 name: {
                     ar: 'قميص كاروهات زيتي',
                     en: 'Dark Green Plaid Shirt'
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 price: 449,
                 images: ['images/shirt.18.1.jpeg', 'images/shirt.18.2.jpeg', 'images/shirt.18.3.jpeg'],
                 category: 'shirts',
-                sizes: ["", "M", "2XL", ""],
+                sizes: ["", "M", "", ""],
                 description: {
                     ar: 'قميص أسود كاروهات فاخر مناسب للطلعات البسيطة راقي بكم طويل',
                     en: 'Classy black plaid shirt, luxurious, suitable for casual outings.'
@@ -427,16 +427,16 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         pants: [
             {
-                id: 19,
+                id: 20,
                 code: 'PST-04',
                 name: {
                     ar: 'بنطلون كلاسيكي أسود',
                     en: 'Classic Black Pants'
                 },
-                price: 450,
-                images: ['images/pants.2.1.jpg', 'images/pants.2.2.jpg', 'images/pants.2.3.jpg'],
+                price: 469,
+                images: [ 'images/black.haywest.1.1.jpeg'],
                 category: 'pants',
-                sizes: ["32", "34", "36", "38", "40"],
+                sizes: ["", "34", "", "38", "40"],
                 description: {
                     ar: 'بنطلون أسود كلاسيكي يناسب جميع المناسبات مع قصة مثالية.',
                     en: 'Classic black pants suitable for all occasions with perfect cut.'
@@ -447,16 +447,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             {
-                id: 20,
+                id: 21,
                 code: 'PT-002',
                 name: {
-                    ar: 'بنطلون كلاسيكي بيجي',
-                    en: 'Classic Beige Pants'
+                    ar: 'بنطلون كلاسيكي     رمادي فاتح',
+                    en: 'Classic whitegray Pants'
                 },
-                price: 480,
-                images: ['images/pants.1.1.jpg', 'images/pants.1.2.jpg'],
+                price: 469,
+                images: ['images/gray.haywest.1.1.jpeg', 'images/gray.haywest.1.2.jpeg'],
                 category: 'pants',
-                sizes: ["30", "32", "34", "36"],
+                sizes: ["30", "38", "40", ""],
+                description: {
+                    ar: 'بنطلون بيجي أنيق يتميز بالراحة والأناقة في نفس الوقت.',
+                    en: 'Elegant beige pants characterized by comfort and elegance at the same time.'
+                },
+                features: {
+                    ar: ['لون بيجي محايد', 'راحة فائقة', 'تصميم عصري', 'جودة عالية'],
+                    en: ['Neutral beige color', 'Super comfort', 'Modern design', 'High quality']
+                }
+            },
+            {
+                id: 22,
+                code: 'PT-022',
+                name: {
+                    ar: 'بنطلون كلاسيكي ابيض',
+                    en: 'Classic white Pants'
+                },
+                price: 469,
+                images: ['images/white.haywest.1.1.jpeg', ''],
+                category: 'pants',
+                sizes: ["", "36", "", ""],
+                description: {
+                    ar: 'بنطلون بيجي أنيق يتميز بالراحة والأناقة في نفس الوقت.',
+                    en: 'Elegant beige pants characterized by comfort and elegance at the same time.'
+                },
+                features: {
+                    ar: ['لون بيجي محايد', 'راحة فائقة', 'تصميم عصري', 'جودة عالية'],
+                    en: ['Neutral beige color', 'Super comfort', 'Modern design', 'High quality']
+                }
+            },
+            {
+                id: 23,
+                code: 'PT-099',
+                name: {
+                    ar: 'بنطلون كلاسيكي رمادي غامق',
+                    en: 'Classic silver Pants'
+                },
+                price: 469,
+                images: ['images/silver.haywest.1.1.jpeg', ],
+                category: 'pants',
+                sizes: ["", "38", "", ""],
                 description: {
                     ar: 'بنطلون بيجي أنيق يتميز بالراحة والأناقة في نفس الوقت.',
                     en: 'Elegant beige pants characterized by comfort and elegance at the same time.'
@@ -469,7 +509,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         shoes: [
             {
-                id: 21,
+                id: 24,
                 code: 'SH-001',
                 name: {
                     ar: 'حذاء كلاسيكي أسود',
@@ -489,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             {
-                id: 22,
+                id: 25,
                 code: 'SH-002',
                 name: {
                     ar: 'حذاء كلاسيكي بني',
